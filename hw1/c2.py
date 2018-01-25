@@ -24,9 +24,9 @@ plt.show()
 
 #somehow generates 2 decision regions
 x = np.linspace(-10,20, 100)
-plt.plot(x,0.6*mlab.normpdf(x,4,(10/2)-2)) 
-plt.plot(x,0.2*mlab.normpdf(x,6,(10/6)+2))
-plt.plot(x,0.2*mlab.normpdf(x,5,(10/6)+1))
+plt.plot(x,0.6*mlab.normpdf(x,4,3)) 
+plt.plot(x,0.2*mlab.normpdf(x,6,11/3))
+plt.plot(x,0.2*mlab.normpdf(x,5,8/3))
 plt.axvline(x=4.7,color = "black")
 plt.xticks()
 plt.show()
