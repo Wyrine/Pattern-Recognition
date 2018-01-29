@@ -1,7 +1,7 @@
 CXX = g++ -std=c++11
-INCLUDES = ../Matrix/lib
+INCLUDES = ../Matrix/include
 CXXFLAGS = -g -Wall -I$(INCLUDES)
-LIBS = $(INCLUDES)/lmatrix.a
+LIBS = $(INCLUDES)/lmatrix.a 
 EXECUTABLES = mle
 HEADERS = mle.hpp
 
