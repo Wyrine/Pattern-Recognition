@@ -2,9 +2,8 @@ CXX = g++ -std=c++11
 INCLUDES = ../Matrix/lib
 CXXFLAGS = -g -Wall -I$(INCLUDES)
 LIBS = $(INCLUDES)/lmatrix.a
-SRC_FILES = $(wildcard *.cpp)
-OBJ_FILES = $(patsubst %.cpp, %.o, $(SRC_FILES)) 
-EXECUTABLES = $(patsubst %.cpp, %, $(SRC_FILES))
+EXECUTABLES = mle
+HEADERS = mle.hpp
 
 all: $(EXECUTABLES)
 
@@ -12,9 +11,9 @@ all: $(EXECUTABLES)
 clean:
 	rm -f core $(EXECUTABLES) *.o
 
-$(EXECUTABLES): $(OBJ_FILES)
-		$(CXX)  -c $^
+.SUFFIXES: .cpp .o
+.cpp.o:
+	$(CXX) $(CXXFLAGS) -c $*.cpp
 
-pr1: $(OBJ_FILES)
-	$(CXX) $(CXXFLAGS) -o $@ $^ 
-
+mle: mle.o mle.hpp
+	$(CXX) $(CXXFLAGS) -g -o mle mle.o
