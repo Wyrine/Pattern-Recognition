@@ -8,5 +8,7 @@
 #include "mle.hpp"
 
 struct Data{
-	vector<double> x, y, label;
+	vector<double> x, y;
+	vector<short> label;
+	int totalElems;
 };
