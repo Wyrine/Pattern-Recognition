@@ -2,7 +2,7 @@ CXX = g++ -std=c++11
 INCLUDES = ../Matrix/include
 CXXFLAGS = -g -Wall -I$(INCLUDES)
 LIBS = $(INCLUDES)/lmatrix.a 
-EXECUTABLES = mle
+EXECUTABLES = driver
 HEADERS = mle.hpp
 
 all: $(EXECUTABLES)
@@ -15,5 +15,5 @@ clean:
 .cpp.o:
 	$(CXX) $(CXXFLAGS) -c $*.cpp
 
-mle: mle.o mle.hpp
-	$(CXX) $(CXXFLAGS) -g -o mle mle.o
+driver: driver.o mle.o mle.hpp
+	$(CXX) $(CXXFLAGS) -g -o driver driver.o mle.o
