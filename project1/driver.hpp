@@ -1,14 +1,12 @@
 #pragma once
-
+#include <iostream>
+#include <cmath>
+#include <Matrix.h>
 #include <iostream>
 #include <vector>
+#include <map>
+#include <utility>
 #include <cstdlib>
 #include <string>
 #include <fstream>
-#include "mle.hpp"
-
-struct Data{
-	vector<double> x, y;
-	vector<short> label;
-	int totalElems;
-};
+#include <Pr.h>

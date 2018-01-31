@@ -2,49 +2,47 @@
 
 using namespace std;
 
-Data readTraining(const string fName);
+void readTraining(const string fName);
 
 
 int
 main(int argc, char** argv)
 {
-	Data d;
 	if(argc < 5)
 	{
 		cerr << "Usage: ./driver trainFile testFile numFeatures numClasses\n";
 		return(1);
 	}
-	d = readTraining(argv[1]);
+	readTraining(argv[1]);
 	return 0;
 }
 
-Data
+void
 readTraining(const string fName)
 {
 	
-	Data d; 
+	Matrix z;
 	string trash;
 	short curLabel;
-	double x,y;
+	double x, y;
 	ifstream train(fName);
 
 	if(! train.is_open() )
 	{
-		fprintf(stderr, "Could not open %s, exiting.\n", fName.c_str());
+		cerr << "Could not open " << fName << ", exiting.\n";
 		exit(1);
 	}
 	//reading in the header line
 	train >> trash >> trash >> trash;
 	//begin reading data
-	d.totalElems = 0;
+	//d.totalElems = 0;
 	while(train >> x)
 	{
 		train >> y >> curLabel;
-		d.x.push_back(x);
-		d.y.push_back(y);
-		d.label.push_back(curLabel);
-		d.totalElems++;
+		//d.x.push_back(x);
+		//d.y.push_back(y);
+		//d.label.push_back(curLabel);
+		//d.totalElems++;
 	}	
-	train.close();
-	return d;
+	//train.close();
 }
