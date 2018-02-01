@@ -3,7 +3,7 @@ INCLUDES = ../Matrix/include
 CXXFLAGS = -g -Wall -I$(INCLUDES)
 LIBS = $(INCLUDES)/libmatrix.a 
 EXECUTABLES = driver
-HEADERS = mle.hpp
+HEADERS = mat.hpp
 
 all: $(EXECUTABLES)
 
@@ -15,5 +15,5 @@ clean:
 .cpp.o:
 	$(CXX) $(CXXFLAGS) -c $*.cpp
 
-driver: driver.o mle.o mle.hpp driver.hpp
-	$(CXX) -g -o driver driver.o mle.o $(LIBS)
+driver: driver.o mat.o mat.hpp
+	$(CXX) -g -o driver driver.o mat.o $(LIBS)
