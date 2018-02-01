@@ -12,14 +12,23 @@
 
 class Data
 {	
-	//still unsure about how to implement the key
+	//this idea is to be scrapped. I will make an array of a new object
+	/*
+		Things needed to be stored:
+
+		variance
+		covariance matrix for feature
+		mean
+		data
+		count for the field
+	*/
+
 	//int is the key, pair< Column vector of data, covariance matrix > 
 	std::map<int, std::pair<Matrix, Matrix> > features;
 	int totalElems;
 
 public:
 	Data();
-//	Data(int key, int 
 	int getTotal() const;
 	Matrix getFeature(const int key) const;
 	
