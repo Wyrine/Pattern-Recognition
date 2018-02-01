@@ -9,12 +9,11 @@
 
 class Mat 
 {	
-	Matrix xData;
-	Matrix yData;
+	Matrix xData, yData;
+	Matrix xMu, yMu;
 	int classes;
 	int features;
 	int totalElems;
-
 public:
 	Mat();
 	Mat(stringstream &ss, const int lines, const int features, const int classes);

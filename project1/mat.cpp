@@ -11,13 +11,14 @@ using namespace std;
 
 Mat::Mat()
 {
-	totalElems = 0;
+	classes = features = totalElems = 0;
 }
 
 Mat::Mat(stringstream &_ss, const int _lines, const int _features, const int _classes)
 {
 	double trX, trY;
 	int trL, i; 
+	yMu.createMatrix(_features);
 	classes = _classes;
 	features = _features;
 	totalElems = _lines;
@@ -37,7 +38,9 @@ Mat::Mat(stringstream &_ss, const int _lines, const int _features, const int _cl
 		xData(i, 1) = trX;
 		yData(i, 1) = trY;
 	}
-	cout << xData << endl << endl << endl << yData << endl;
+	//get mu for x and y
+	xMu = mean(xData, classes);
+	yMu = mean(yData, classes);
 }
 
 
