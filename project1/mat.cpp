@@ -14,7 +14,7 @@ Mat::Mat()
 	totalElems = 0;
 }
 
-Mat::Mat(stringstream _ss, const int _lines, const int _features, const int _classes)
+Mat::Mat(stringstream &_ss, const int _lines, const int _features, const int _classes)
 {
 	double trX, trY;
 	int trL, i; 
@@ -25,18 +25,19 @@ Mat::Mat(stringstream _ss, const int _lines, const int _features, const int _cla
 	xData.createMatrix(totalElems/classes, classes);
 	yData.createMatrix(totalElems/classes, classes);
 
-	for(i = 0; i < totalElems; i++)
+	for(i = 0; i < totalElems/classes; i++)
 	{
 		_ss >> trX >> trY >> trL;
 		xData(i, 0) = trX;
 		yData(i, 0) = trY;
 	}
-	for(; i < totalElems; i++)
+	for(i = 0; i < totalElems/classes; i++)
 	{
 		_ss >> trX >> trY >> trL;
 		xData(i, 1) = trX;
 		yData(i, 1) = trY;
 	}
+	cout << xData << endl << endl << endl << yData << endl;
 }
 
 

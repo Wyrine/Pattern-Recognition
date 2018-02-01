@@ -17,6 +17,6 @@ class Mat
 
 public:
 	Mat();
-	Mat(stringstream ss, const int lines, const int features, const int classes);
+	Mat(stringstream &ss, const int lines, const int features, const int classes);
 	int getTotal(const int denominator = 1) const;
 };
