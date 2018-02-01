@@ -2,7 +2,6 @@
 Kirolos Shahat
 ECE 471
 Maximum Likelihood Estimate
-
 */
 
 #include <iostream>
@@ -41,10 +40,6 @@ Mat::Mat(stringstream &_ss, const int _lines, const int _features, const int _cl
 	//get mu for x and y
 	xMu = mean(xData, classes);
 	yMu = mean(yData, classes);
-}
-
-
-int Mat::getTotal(const int denominator) const
-{
-	return totalElems/denominator;
+	xCov = cov(xData, features);
+	yCov = cov(yData, features);
 }

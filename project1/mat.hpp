@@ -9,13 +9,11 @@
 
 class Mat 
 {	
+	int classes, features;
 	Matrix xData, yData;
-	Matrix xMu, yMu;
-	int classes;
-	int features;
+	Matrix xMu, yMu, xCov, yCov;
 	int totalElems;
 public:
 	Mat();
 	Mat(stringstream &ss, const int lines, const int features, const int classes);
-	int getTotal(const int denominator = 1) const;
 };
