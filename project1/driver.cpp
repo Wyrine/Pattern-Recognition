@@ -18,7 +18,7 @@ main(int argc, char** argv)
 {
 	int d = 0;
 	stringstream ss;
-	
+
 	if(argc < 5)
 	{
 		cerr << "Usage: ./driver trainFile testFile numFeatures numClasses\n";

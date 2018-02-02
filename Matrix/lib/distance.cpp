@@ -1,9 +1,9 @@
 /**********************************************************
- * distance.cpp - distance calculation 
+ * distance.cpp - distance calculation
  *
  *   - euc: Euclidean distance between two vectors
  *   - mah: Mahalanobis distance between a sample and a cluster
- * 
+ *
  * Author: Hairong Qi (C) hqi@utk.edu
  *
  * Created: 02/17/08
@@ -60,7 +60,7 @@ double euc(const Matrix &x, const Matrix &y)
  * @param x The sample (a column vector).
  * @param C The covariance matrix.
  * @param mu The mean (a column vector).
- * @return Mahalanobis distance between the sample and the cluster 
+ * @return Mahalanobis distance between the sample and the cluster
  *         characterized the mean and covariance.
  */
 double mah(const Matrix &x, const Matrix &C, const Matrix &mu)
@@ -77,7 +77,7 @@ double mah(const Matrix &x, const Matrix &C, const Matrix &mu)
 
   if (ncx!=1 || ncmu!=1) {
     cout << "Mahalanobis: "
-	 << "the input sample and mean need to be column vectors\n";    
+	 << "the input sample and mean need to be column vectors\n";
     exit(3);
   }
 

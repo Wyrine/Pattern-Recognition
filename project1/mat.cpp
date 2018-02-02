@@ -1,7 +1,6 @@
 /*
 Kirolos Shahat
 ECE 471
-Maximum Likelihood Estimate
 */
 
 #include <iostream>
@@ -13,33 +12,33 @@ Mat::Mat()
 	classes = features = totalElems = 0;
 }
 
-Mat::Mat(stringstream &_ss, const int _lines, const int _features, const int _classes)
+Mat::Mat(stringstream &_ss, const int _lines, const int _features,
+		const int _classes)
 {
 	double trX, trY;
-	int trL, i; 
-	yMu.createMatrix(_features);
+	int trL, i;
 	classes = _classes;
 	features = _features;
 	totalElems = _lines;
 
-	xData.createMatrix(totalElems/classes, classes);
-	yData.createMatrix(totalElems/classes, classes);
+	first.createMatrix(totalElems/classes, features);
+	second.createMatrix(totalElems/classes, features);
 
 	for(i = 0; i < totalElems/classes; i++)
 	{
 		_ss >> trX >> trY >> trL;
-		xData(i, 0) = trX;
-		yData(i, 0) = trY;
+		first(i, 0) = trX;
+		first(i, 1) = trY;
 	}
 	for(i = 0; i < totalElems/classes; i++)
 	{
 		_ss >> trX >> trY >> trL;
-		xData(i, 1) = trX;
-		yData(i, 1) = trY;
+		second(i, 0) = trX;
+		second(i, 1) = trY;
 	}
 	//get mu for x and y
-	xMu = mean(xData, classes);
-	yMu = mean(yData, classes);
-	xCov = cov(xData, features);
-	yCov = cov(yData, features);
+	mu_0 = mean(first, classes);
+	mu_1 = mean(second, classes);
+	firstCov = cov(first, features);
+	secondCov = cov(second, features);
 }

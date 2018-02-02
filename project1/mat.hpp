@@ -7,13 +7,14 @@
 #include <fstream>
 #include <sstream>
 
-class Mat 
-{	
+class Mat
+{
 	int classes, features;
-	Matrix xData, yData;
-	Matrix xMu, yMu, xCov, yCov;
+	Matrix first, second;
+	Matrix mu_0, mu_1, firstCov, secondCov;
 	int totalElems;
 public:
 	Mat();
-	Mat(stringstream &ss, const int lines, const int features, const int classes);
+	Mat(stringstream &ss, const int lines, const int features,
+		const int classes);
 };

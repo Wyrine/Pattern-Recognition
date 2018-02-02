@@ -15,5 +15,5 @@ clean:
 .cpp.o:
 	$(CXX) $(CXXFLAGS) -c $*.cpp
 
-driver: driver.o mat.o mat.hpp
-	$(CXX) -g -o driver driver.o mat.o $(LIBS)
+driver: *.o $(HEADERS)
+	$(CXX) -g -o driver *.o $(LIBS)
