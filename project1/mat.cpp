@@ -43,18 +43,54 @@ Mat::Mat(stringstream &_ss, const int _lines, const int _features,
 	secondCov = cov(second, features);
 }
 
-Matrix Mat::getMu(const int choice) const
+
+Matrix
+Mat::getMu(const int choice) const
 {
 	return (choice > 0 ) ? mu_1 : mu_0;
 }
 
-Matrix Mat::getCov(const int choice) const
+Matrix
+Mat::getCov(const int choice) const
 {
 	return (choice > 0 ) ? firstCov : secondCov;
 }
 
-Matrix Mat::getMat(const int choice) const
+Matrix
+Mat::getMat(const int choice) const
 {
 	return ( choice > 0 ) ? second : first;
 }
 
+int
+Mat::case1Accuracy(const char* testFile)
+{
+	Matrix testData = readData(testFile, features + 1);
+	double prior[classes];
+	int count, i;
+
+	for(i = 0; i < classes; i++)
+		prior[i] = 1/classes;
+
+	getProb(testData, prior, firstCov(0, 0));
+	return 0;
+}
+
+double
+Mat::getProb(Matrix testData, double prior[], double cov)
+{
+	Matrix identity(features,features);
+	Matrix xVec(features, 1);
+	int samples = testData.getRow() - 1, count = 0;
+	for(int i = 0; i < features; i++) identity(i, i) = 1;
+	identity =  cov * identity;
+	for(int i = 1; i < samples; i++)
+	{
+		for(int j = 0; j < features; j++)
+			xVec(0, j) = testData(i, j);
+		//use pdf*prior as a gaussian
+		//should make this a function call probably
+	}
+
+	return count/samples;
+}

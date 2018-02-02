@@ -6,7 +6,7 @@
 #include <cstdlib>
 #include <string>
 #include <fstream>
-#include <Pr.h>
+#include "Pr.h"
 #include "mat.hpp"
 
 using namespace std;
@@ -26,7 +26,7 @@ main(int argc, char** argv)
 	}
 	ss = readTraining(argv[1], d);
 	Mat trData(ss, d, atoi(argv[3]), atoi(argv[4]));
-	Matrix I(2, 2);
+	trData.case1Accuracy(argv[2]);
 
 	return 0;
 }
