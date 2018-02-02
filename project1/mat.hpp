@@ -17,4 +17,7 @@ public:
 	Mat();
 	Mat(stringstream &ss, const int lines, const int features,
 		const int classes);
+	Matrix getMu(const int) const;
+	Matrix getCov(const int) const;
+	Matrix getMat(const int) const;
 };

@@ -42,3 +42,19 @@ Mat::Mat(stringstream &_ss, const int _lines, const int _features,
 	firstCov = cov(first, features);
 	secondCov = cov(second, features);
 }
+
+Matrix Mat::getMu(const int choice) const
+{
+	return (choice > 0 ) ? mu_1 : mu_0;
+}
+
+Matrix Mat::getCov(const int choice) const
+{
+	return (choice > 0 ) ? firstCov : secondCov;
+}
+
+Matrix Mat::getMat(const int choice) const
+{
+	return ( choice > 0 ) ? second : first;
+}
+

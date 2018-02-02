@@ -26,6 +26,8 @@ main(int argc, char** argv)
 	}
 	ss = readTraining(argv[1], d);
 	Mat trData(ss, d, atoi(argv[3]), atoi(argv[4]));
+	Matrix I(2, 2);
+
 	return 0;
 }
 
