@@ -1,10 +1,10 @@
 /********************************************************************
- * Matrix.h - header file of the Matrix library which defines 
+ * Matrix.h - header file of the Matrix library which defines
  *           a new class "Matrix" and the associated member functions
  *
- * Note: 
- *   This is a simple C++ library for matrix processing. 
- *   The purpose is not for high performance, but to show how 
+ * Note:
+ *   This is a simple C++ library for matrix processing.
+ *   The purpose is not for high performance, but to show how
  *   the algorithm works through programming.
  *
  * Copyright (C) hqi@utk.edu, Jan. 2002
@@ -22,20 +22,20 @@
  *               positive-definite matrix. See the following link for detail
  *               http://en.wikipedia.org/wiki/Jacobi_eigenvalue_algorithm
  *   - 09/24/13: the following changes are made by Steven Clukey
- *               1. change the friend functions (matrix + - / * scalar) 
- *               into member functions and add left side operations 
+ *               1. change the friend functions (matrix + - / * scalar)
+ *               into member functions and add left side operations
  *               2. add "const" to functions to allow chaining operations
  *               3. add mtod() to convert 1x1 matrix to double
  *   - 01/12/08: separate jacobi() and eigsrt(), it does have a reason!
  *   - 01/11/08: compress the Matrix class member function,
  *               make most C-style functions
- *   - 05/03/05: combined jacobi() and eigsrt() 
+ *   - 05/03/05: combined jacobi() and eigsrt()
  *               added distance() and insertsort()
  *   - 04/07/05: fix jacobi() that does not alter matrix (Tom Karnowski)
  *   - 04/07/05: fix readPPM and writePPM using C style file I/O
  *   - 01/13/05: delete the Data class, only keep Matrix
  *   - 01/13/05: change all the overloading operators to pass-by-reference
- *   - 01/13/05: add overloading for "<<" 
+ *   - 01/13/05: add overloading for "<<"
  *
  ********************************************************************/
 
@@ -45,35 +45,35 @@
 #include <iostream>
 using namespace std;
 
-/** 
+/**
  * Matrix is an m x n matrix, where
  *     m - # of rows (or # of samples)
  *     n - # of columns (or # or features)
  *         (might have one more column that indicates the sample label/class)
  *     channel - # of channels
- **/   
+ **/
 class Matrix {
   friend ostream & operator<<(ostream &, const Matrix &);
- 
+
  public:
   // constructors and destructor
-  Matrix();                          // default constructor 
+  Matrix();                          // default constructor
   Matrix(int,                        // constructor with row
          int);                       // column
-  Matrix(const Matrix &);            // copy constructor 
-  ~Matrix();                         // destructor 
+  Matrix(const Matrix &);            // copy constructor
+  ~Matrix();                         // destructor
 
   // create a matrix
-  void createMatrix(int,             // row 
+  void createMatrix(int,             // row
                     int c=1);        // column (default 1, a column vector)
   void initMatrix(float init=0.0);   // initiate the matrix component
                                      // the default is 0.0
 
   // get and set functions
-  int getRow() const;                // get row number 
+  int getRow() const;                // get row number
   int getCol() const;                // get column number
-  void setRow(int);                  // set row number 
-  void setCol(int);                  // set column number 
+  void setRow(int);                  // set row number
+  void setCol(int);                  // set column number
 
 
   // operator overloading functions
@@ -90,16 +90,16 @@ class Matrix {
   Matrix  operator/(const double) const;    // matrix divided by a scalar
                                             // (element-wised division)
   Matrix &operator/=(const Matrix &);       // overloading /= operator
-  Matrix  operator*(const Matrix &) const;  // overloading * operator 
+  Matrix  operator*(const Matrix &) const;  // overloading * operator
   Matrix  operator*(const double) const;    // matrix multiplied by a scalar
                                             // (element-wised multiplication)
   Matrix &operator*=(const Matrix &);       // overloading *= operator
-  Matrix  operator->*(const Matrix &) const;// overloading ->* operator 
+  Matrix  operator->*(const Matrix &) const;// overloading ->* operator
                                             // (matrix multiplication) 
   //  Matrix & operator->*=(const Matrix &);// overloading ->*= operator
 
  private:
-  int row;                           // number of rows / samples 
+  int row;                           // number of rows / samples
   int col;                           // number of columns / features
   double *matrix;                    // matrix buffer
 };
@@ -131,14 +131,14 @@ Matrix subMatrix(const Matrix &,         // crop a matrix
                  const int);               // ending column index
 Matrix getType(const Matrix &,           // get samples of a certain class
                const int);               // the data type
-                                   // can only be called when the last col 
+                                   // can only be called when the last col
                                    // is the data type
 
 double mtod(const Matrix &);       // convert 1x1 matrix to a double precision number
 
 // matrix sorting (only for 1-D row vectors)
 void insertsort(Matrix &,          // the vector
-                const Matrix &,    // the sorted vector (row vector), 
+                const Matrix &,    // the sorted vector (row vector),
                 const Matrix &);   // the index of the sorted matrix
 
 // calculate the eigensystem
@@ -149,9 +149,9 @@ void jacobi(Matrix &,              // the input matrix
 void eigsrt(Matrix &,              // the eigenvalue vector
             Matrix &);             // the eigenvector matrix
 // find the maximum entry value of the off-diagnal matrix
-void findOffDiagMax(Matrix &inmtx, 
-		    double &maxvalue, 
-		    int &xind, 
+void findOffDiagMax(Matrix &inmtx,
+		    double &maxvalue,
+		    int &xind,
 		    int &yind);
 
 #endif

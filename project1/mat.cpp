@@ -81,16 +81,27 @@ Mat::getProb(Matrix testData, double prior[], double cov)
 {
 	Matrix identity(features,features);
 	Matrix xVec(features, 1);
-	int samples = testData.getRow() - 1, count = 0;
+	int samples = testData.getRow() - 1, count = 0, index = 0, prev = -1;
+	double g[classes];
+
 	for(int i = 0; i < features; i++) identity(i, i) = 1;
 	identity =  cov * identity;
 	for(int i = 1; i < samples; i++)
 	{
 		for(int j = 0; j < features; j++)
 			xVec(0, j) = testData(i, j);
+        
+        Matrix dif = xVec - mu_0;
+	    g[0] = - mtod(transpose(dif) ->* dif) / (2 * cov) + log(prior[0]);
+        dif = xVec - mu_1;
+	    g[1] = - mtod(transpose(dif) ->* dif) / (2 * cov) + log(prior[1]);
+        if( g[1] == g[0] )
+            ++count;
+		//exit(1);
 		//use pdf*prior as a gaussian
 		//should make this a function call probably
-	}
 
+	}
+    cout << count << " | " << samples;
 	return count/samples;
 }
