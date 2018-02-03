@@ -11,7 +11,7 @@
 #include <sstream>
 #include <vector>
 
-#define STEP_SIZE 0.00005
+#define STEP_SIZE 0.1
 #define PI_CONST 1.0 / pow(2 * M_PI, features/2) 
 
 class Mat
@@ -24,7 +24,7 @@ class Mat
 	double getProb(Matrix testData, double prior[], Matrix cov) const;
 public:
 	Mat();
-	Mat(stringstream &ss, const int lines, const int features,
+	Mat(stringstream &ss, const int lines, const int features, \
 		const int classes);
 	Matrix getMu(const int) const;
 	Matrix getCov(const int) const;
@@ -32,5 +32,5 @@ public:
 	double case1Accuracy(const char* testFile) const;
 	double case2Accuracy(const char* testFile) const;
 	double case3Accuracy(const char* testFile) const;
-    vector<double> generatePriorList(const char* testFile) const; 
+    void generatePriorList(const char* testFile) const; 
 };

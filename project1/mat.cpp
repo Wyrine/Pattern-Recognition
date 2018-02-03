@@ -100,12 +100,12 @@ Mat::case3Accuracy(const char* testFile) const
     return getProb(testData, prior, 0.5 *  (firstCov + secondCov));
 }
 
-vector<double>
+void
 Mat::generatePriorList(const char* testFile) const
 {
-    double benchMark = case3Accuracy(testFile), newAccuracy;
-    double curPrior[classes];
-    vector<double> class_0_prior;
+    //double benchMark = case3Accuracy(testFile);
+    double curPrior[classes], newAccuracy;
+    //vector<double> class_0_prior;
     Matrix testData = readData(testFile, features+1);
     Matrix bigSigma = 0.5 * (firstCov + secondCov);
 
@@ -114,15 +114,17 @@ Mat::generatePriorList(const char* testFile) const
         curPrior[0] = i;
         curPrior[1] = 1 - i;
         newAccuracy = getProb(testData, curPrior, bigSigma);
-        if(newAccuracy > benchMark)
+        /*if(newAccuracy > benchMark)
         {
             benchMark = newAccuracy;
             class_0_prior.push_back(i);
             cout << "W0: " << i << " W1: " << 1 - i << " Performance: " << benchMark << endl;
-        }
+        }*/
+        cout << "W0: " << i << " W1: " << 1 - i << " Performance: " << newAccuracy << endl;
+        
    }
 
-    return class_0_prior;
+   // return class_0_prior;
 }
 
 double

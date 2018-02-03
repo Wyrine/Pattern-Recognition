@@ -1,9 +1,13 @@
 Case 1: 0.712
 Case 2: 0.884 which is from covariance matrix of class 0.
 Case 3: 0.891
-W0: 0.4244 W1: 0.5756 Performance: 0.892
-W0: 0.42465 W1: 0.57535 Performance: 0.893
-W0: 0.43115 W1: 0.56885 Performance: 0.894
-W0: 0.45565 W1: 0.54435 Performance: 0.895
-W0: 0.4604 W1: 0.5396 Performance: 0.896
-W0: 0.46275 W1: 0.53725 Performance: 0.897
+W0: 0.1 W1: 0.9 Performance: 0.769
+W0: 0.2 W1: 0.8 Performance: 0.834
+W0: 0.3 W1: 0.7 Performance: 0.871
+W0: 0.4 W1: 0.6 Performance: 0.883
+W0: 0.5 W1: 0.5 Performance: 0.891
+W0: 0.6 W1: 0.4 Performance: 0.884
+W0: 0.7 W1: 0.3 Performance: 0.867
+W0: 0.8 W1: 0.2 Performance: 0.826
+W0: 0.9 W1: 0.1 Performance: 0.752
+W0: 1 W1: 1.11022e-16 Performance: 0.5
