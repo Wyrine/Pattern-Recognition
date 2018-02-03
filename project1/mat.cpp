@@ -63,7 +63,7 @@ Mat::getMat(const int choice) const
 }
 
 double
-Mat::case1Accuracy(const char* testFile)
+Mat::case1Accuracy(const char* testFile) const
 {
 	Matrix testData = readData(testFile, features + 1);
     Matrix identity(features, features);
@@ -77,7 +77,7 @@ Mat::case1Accuracy(const char* testFile)
 }
 
 double
-Mat::case2Accuracy(const char* testFile)
+Mat::case2Accuracy(const char* testFile) const
 {
 	Matrix testData = readData(testFile, features + 1);
 	double prior[classes];
@@ -89,7 +89,7 @@ Mat::case2Accuracy(const char* testFile)
 }
 
 double
-Mat::case3Accuracy(const char* testFile)
+Mat::case3Accuracy(const char* testFile) const
 {
 	Matrix testData = readData(testFile, features + 1);
 	double prior[classes];
@@ -97,11 +97,36 @@ Mat::case3Accuracy(const char* testFile)
 	for(int i = 0; i < classes; i++)
 		prior[i] = 1.0/classes;
 
-    return getProb(testData, prior, (1.0 / 2) *  (firstCov + secondCov));
+    return getProb(testData, prior, 0.5 *  (firstCov + secondCov));
+}
+
+vector<double>
+Mat::generatePriorList(const char* testFile) const
+{
+    double benchMark = case3Accuracy(testFile), newAccuracy;
+    double curPrior[classes];
+    vector<double> class_0_prior;
+    Matrix testData = readData(testFile, features+1);
+    Matrix bigSigma = 0.5 * (firstCov + secondCov);
+
+    for(double i = STEP_SIZE; i < 1; i += STEP_SIZE )
+    {
+        curPrior[0] = i;
+        curPrior[1] = 1 - i;
+        newAccuracy = getProb(testData, curPrior, bigSigma);
+        if(newAccuracy > benchMark)
+        {
+            benchMark = newAccuracy;
+            class_0_prior.push_back(i);
+            cout << "W0: " << i << " W1: " << 1 - i << " Performance: " << benchMark << endl;
+        }
+   }
+
+    return class_0_prior;
 }
 
 double
-Mat::getProb(Matrix testData, double prior[], Matrix cov)
+Mat::getProb(Matrix testData, double prior[], Matrix cov) const
 {
 	Matrix xVec(features, 1), diff;
 

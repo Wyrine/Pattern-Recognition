@@ -29,6 +29,7 @@ main(int argc, char** argv)
     cout << "Case 1: " << trData.case1Accuracy(argv[2]) << endl;
     cout << "Case 2: " << trData.case2Accuracy(argv[2]) << " which is from covariance matrix of class 0.\n";
     cout << "Case 3: " << trData.case3Accuracy(argv[2]) << endl;
+    trData.generatePriorList(argv[2]);
 	return 0;
 }
 
