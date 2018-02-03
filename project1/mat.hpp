@@ -29,4 +29,6 @@ public:
 	Matrix getCov(const int) const;
 	Matrix getMat(const int) const;
 	double case1Accuracy(const char* testFile);
+	double case2Accuracy(const char* testFile);
+	double case3Accuracy(const char* testFile);
 };

@@ -26,8 +26,9 @@ main(int argc, char** argv)
 	}
 	ss = readTraining(argv[1], d);
 	Mat trData(ss, d, atoi(argv[3]), atoi(argv[4]));
-	trData.case1Accuracy(argv[2]);
-
+    cout << "Case 1: " << trData.case1Accuracy(argv[2]) << endl;
+    cout << "Case 2: " << trData.case2Accuracy(argv[2]) << " which is from covariance matrix of class 0.\n";
+    cout << "Case 3: " << trData.case3Accuracy(argv[2]) << endl;
 	return 0;
 }
 

@@ -77,6 +77,30 @@ Mat::case1Accuracy(const char* testFile)
 }
 
 double
+Mat::case2Accuracy(const char* testFile)
+{
+	Matrix testData = readData(testFile, features + 1);
+	double prior[classes];
+
+	for(int i = 0; i < classes; i++)
+		prior[i] = 1.0/classes;
+
+    return getProb(testData, prior, firstCov);
+}
+
+double
+Mat::case3Accuracy(const char* testFile)
+{
+	Matrix testData = readData(testFile, features + 1);
+	double prior[classes];
+
+	for(int i = 0; i < classes; i++)
+		prior[i] = 1.0/classes;
+
+    return getProb(testData, prior, (1.0 / 2) *  (firstCov + secondCov));
+}
+
+double
 Mat::getProb(Matrix testData, double prior[], Matrix cov)
 {
 	Matrix xVec(features, 1), diff;
