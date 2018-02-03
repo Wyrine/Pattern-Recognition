@@ -70,7 +70,7 @@ Mat::case1Accuracy(const char* testFile)
 	int count, i;
 
 	for(i = 0; i < classes; i++)
-		prior[i] = 1/classes;
+		prior[i] = 1.0/classes;
 
 	getProb(testData, prior, firstCov(0, 0));
 	return 0;
@@ -82,7 +82,7 @@ Mat::getProb(Matrix testData, double prior[], double cov)
 	Matrix identity(features,features);
 	Matrix xVec(features, 1);
 	int samples = testData.getRow() - 1, count = 0, index = 0, prev = -1;
-	double g[classes];
+	double post[classes];
 
 	for(int i = 0; i < features; i++) identity(i, i) = 1;
 	identity =  cov * identity;
@@ -92,14 +92,16 @@ Mat::getProb(Matrix testData, double prior[], double cov)
 			xVec(0, j) = testData(i, j);
         
         Matrix dif = xVec - mu_0;
-	    g[0] = - mtod(transpose(dif) ->* dif) / (2 * cov) + log(prior[0]);
+	    post[0] = exp(- pow(mtod(transpose(dif) ->* dif), 2) / (2.0 * cov) + log(prior[0]));
+	    //post[0] = exp(- pow(mtod(transpose(dif) ->* dif), 2) / (2.0 * cov) + log(prior[0])) * 1.0/ (2.0 * cov * M_PI) ;
+        cout << post[0] << endl;
         dif = xVec - mu_1;
-	    g[1] = - mtod(transpose(dif) ->* dif) / (2 * cov) + log(prior[1]);
-        if( g[1] == g[0] )
-            ++count;
-		//exit(1);
-		//use pdf*prior as a gaussian
-		//should make this a function call probably
+	    post[1] = exp(- pow(mtod(transpose(dif) ->* dif), 2) / (2.0 * cov) + log(prior[1]));
+	    //post[1] = exp(- (mtod(transpose(dif) ->* dif), 2) / (2.0 * sqrt(cov))) *
+                    //prior[1] * 1.0/ (2.0 * cov * M_PI) ;
+	    //post[1] = - mtod(transpose(dif) ->* dif) / (2 * cov) + log(prior[1]);
+        cout << post[1] << endl;
+        exit(1);
 
 	}
     cout << count << " | " << samples;
