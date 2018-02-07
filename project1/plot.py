@@ -38,6 +38,11 @@ def getData(tr, te):
     
     return xTr, yTr, xTr1, yTr1, xTe, yTe, xTe1, yTe1 
 
+def generateFunc( eq ):
+    xVals = np.linspace(-100, 100, 1)
+    yVals = eq(xVals)
+    return xVals, yVals
+
 
 if __name__ == "__main__":
     xTr, yTr, xTr1, yTr1, xTe, yTe, xTe1, yTe1 = getData("./data/synth.tr", "./data/synth.te")
@@ -45,8 +50,11 @@ if __name__ == "__main__":
     plt.plot(xTr1, yTr1, 'g.')
     plt.plot(xTe, yTe, 'k.')
     plt.plot(xTe1, yTe1, 'k.')
+    test = np.concatenate((xTe, xTe1))
+    print(test)
+    m, b = -0.832623, 0.443782
     #need to write a function that generates a ton of points 
     #x and y based off of a function so that I can use it for the line and such
+    plt.plot(test, m * test + b, '-')
     plt.grid()
     plt.show()
-    pass    
