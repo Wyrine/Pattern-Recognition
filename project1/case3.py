@@ -50,15 +50,15 @@ if __name__ == "__main__":
     train1, = plt.plot(xTr1, yTr1, 'g.', label="Training Data, Class 1")
     test0, = plt.plot(xTe, yTe, 'c.', label="Testing Data, Class 0")
     test1, = plt.plot(xTe1, yTe1, 'y.', label="Testing Data, Class 1")
-    test = np.concatenate((xTe, xTe1))
-    m, b = -0.832623, 0.443782
+    x = np.concatenate((xTe, xTe1))
     #need to write a function that generates a ton of points 
     #x and y based off of a function so that I can use it for the line and such
-    case1Line, = plt.plot(test, m * test + b, '-', label= "Decision Region for Case 1.")
+    case1Line, = plt.plot(x, 1/1424422 * (-1 * np.sqrt(-2447508099 * (x ** 2) - 3145952122488 * x + 5249167758220) -
+    913123 * x + 2977770), '-', label= "Decision Region for Case 3.")
     plt.legend(handles = [train0, train1, test0, test1, case1Line])
     plt.xlabel('x')
     plt.ylabel('y')
-    plt.title("Decision Regions for Case 1")
+    plt.title("Decision Regions for Case 3")
     plt.grid()
-    plt.text(-0.8, 1.2, "y = -0.832623x + 0.443782", color="black")
+    plt.text(-1.34, 0.7187, "y = -0.0704584x + 0.499236", color="black")
     plt.show()
