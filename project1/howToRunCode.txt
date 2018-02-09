@@ -1,0 +1,6 @@
+To run the code that generate the probability use the "make" to make driver
+and that is the executable to run.
+
+case1, 2, and 3 python scripts are for graphing as well as bar.py
+
+the .np files were for getting boundary points for cases 2 and 3.
