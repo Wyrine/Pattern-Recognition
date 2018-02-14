@@ -14,10 +14,11 @@ fcontour(f1, [0.5 1.5 0.7 1.8])
 x1 = [0.8 0.9 1.2 1.1];
 y1 = [1.2 1.4 1.4 1.5];
 hold on
-scatter(x1, y1)
+scatter(x1, y1, 'filled')
+title('Contour plots of two classes')
 x2 = [0.8 0.6 0.65 0.75];
 y2 = [1.1 1 1.1 0.9];
-scatter(x2, y2)
+scatter(x2, y2, 'filled')
 scatter(0.85, 1.15, 'filled')
 fcontour(f2, [0.5 1.5 0.7 1.8])
 hold off
