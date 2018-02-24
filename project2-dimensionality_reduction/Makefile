@@ -3,7 +3,7 @@ INCLUDES = ../Matrix/include
 CXXFLAGS = -g -Wall -I$(INCLUDES)
 LIBS = $(INCLUDES)/libmatrix.a 
 EXECUTABLES = driver
-HEADERS =
+HEADERS = mat.hpp
 
 all: $(EXECUTABLES)
 

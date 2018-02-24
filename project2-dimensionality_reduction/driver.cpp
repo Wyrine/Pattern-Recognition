@@ -1,7 +1,5 @@
 #include <iostream>
-#include "Matrix.h"
-#include "Pr.h"
-
+#include "mat.hpp"
 
 using namespace std;
 
@@ -13,7 +11,7 @@ main(int argc, char** argv)
         cerr << "Usage: ./driver trainFile testFile numFeatures numClasses\n";
         return(1);
     }
-
+    Mat mat(argv[1], atoi(argv[3]), atoi(argv[4]));
 
 
     return 0;
