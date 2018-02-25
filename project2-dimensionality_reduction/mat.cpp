@@ -3,7 +3,7 @@
 
 using namespace std;
 
-Mat::Mat(const char* fName, const int& _features, const int& _classes)
+Mat::Mat(const char* fName, const uint& _features, const uint& _classes, bool pp)
 {
     ifstream input(fName);
     vector<Sample> c0, c1; 
@@ -26,6 +26,7 @@ Mat::Mat(const char* fName, const int& _features, const int& _classes)
         else c1.push_back(s);
     }    
     input.close();
+    buildMatrix(c0);
 }
 
 bool
@@ -35,6 +36,20 @@ Mat::getSamp(ifstream &input, double samp[])
     for(i = 0; i < features && (input >> samp[i]); i++);
     if( i < 7) return false;
     return true;
+}
+
+void
+Mat::buildMatrix(vector<Sample> &c)
+{
+    int sz = c.size();
+    Matrix tmp(sz, features);
+    
+    for(int i = 0; i < sz; i++)
+        for(int j = 0; j < features; j++)
+            tmp(i, j) = c[i][j];
+    cout << tmp;
+    exit(1);
+    dataSet.push_back(tmp);
 }
 
 ostream& 

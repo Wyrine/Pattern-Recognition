@@ -14,27 +14,27 @@
 
 #define STEP_SIZE 0.000005
 #define PI_CONST 1.0 / pow(2*M_PI, features/2)
+typedef unsigned int uint;
 
 struct Sample
 {
-    friend ostream & operator<<(ostream &, const Sample &);
     vector<double> sample;
-    Sample(const int& _features, const double samp[])
+    Sample(const uint& _features, const double samp[])
     {
         for(int i = 0; i < _features; i++)
             sample.push_back(samp[i]);
     }
     double & operator[](const int& i) { return sample[i]; }
+    friend ostream & operator<<(ostream &, const Sample &);
 };
 
 class Mat
 {
-    int classes, features;
+    uint classes, features;
     //int totalElems;
-    //X is original data
-    //nX is data post preprocessing
-    vector<Matrix> X, nX, mean, cov;
+    vector<Matrix> dataSet, mean, cov;
     bool getSamp(ifstream &, double []);
+    void buildMatrix(vector<Sample> &);
 public:
-    Mat(const char*, const int&, const int&);
+    Mat(const char*, const uint&, const uint&, bool pp);
 };
