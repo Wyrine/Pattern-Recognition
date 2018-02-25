@@ -23,14 +23,17 @@ struct Sample
         for(int i = 0; i < _features; i++)
             sample.push_back(samp[i]);
     }
+    double & operator[](const int& i) { return sample[i]; }
 };
 
 class Mat
 {
-    int classes, features, totalElems;
+    int classes, features;
+    //int totalElems;
     //X is original data
     //nX is data post preprocessing
     vector<Matrix> X, nX, mean, cov;
+    bool getSamp(ifstream &, double []);
 public:
     Mat(const char*, const int&, const int&);
 };
