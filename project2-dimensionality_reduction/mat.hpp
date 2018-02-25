@@ -17,6 +17,7 @@
 
 struct Sample
 {
+    friend ostream & operator<<(ostream &, const Sample &);
     vector<double> sample;
     Sample(const int& _features, const double samp[])
     {

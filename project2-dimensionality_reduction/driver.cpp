@@ -12,7 +12,5 @@ main(int argc, char** argv)
         return(1);
     }
     Mat mat(argv[1], atoi(argv[3]), atoi(argv[4]));
-
-
     return 0;
 }

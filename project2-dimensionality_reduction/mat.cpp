@@ -18,17 +18,16 @@ Mat::Mat(const char* fName, const int& _features, const int& _classes)
         exit(1);
     }
     getline(input, curClass);
-
     while( getSamp(input, samp) )
     {
         Sample s(features, samp);
         input >> curClass;
-        if(curClass == "no") c0.push_back(s);
+        if(curClass == "No") c0.push_back(s);
         else c1.push_back(s);
     }    
     input.close();
-    //Need to confirm that everything is read and parsed properly
 }
+
 bool
 Mat::getSamp(ifstream &input, double samp[])
 {
@@ -36,4 +35,13 @@ Mat::getSamp(ifstream &input, double samp[])
     for(i = 0; i < features && (input >> samp[i]); i++);
     if( i < 7) return false;
     return true;
+}
+
+ostream& 
+operator<<(ostream &os, const Sample &s)
+{
+    for(int i = 0; i < s.sample.size(); i++)
+        os << s.sample[i] << " ";
+    os << endl;
+    return os;
 }
