@@ -31,6 +31,7 @@ struct Sample
 class Mat
 {
     uint classes, features;
+    Matrix X, nX;
     vector<Matrix> dataSet, mu, sig;
     double (*compFunc)(const string &);
     bool getSamp(ifstream &, double []);

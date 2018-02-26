@@ -50,13 +50,28 @@ void
 Mat::buildMatrix(vector<Sample> &c)
 {
     int sz = c.size();
-    Matrix tmp(sz, features+1);
-    
+    X.createMatrix(sz, features+1);
     for(int i = 0; i < sz; i++)
         for(int j = 0; j < features + 1; j++)
-            tmp(i, j) = c[i][j];
-    cout << tmp;
+            X(i, j) = c[i][j];
+    //should make this it's own function
+    for(int i = 0; i < classes; i++)
+    {
+        Matrix t2 = getType(X, i);
+        mu.push_back(mean(t2, features));
+        sig.push_back(cov(t2, features));
+    }
+    for(int i = 0; i < sz; i++)
+    {
+        for(int j = 0; j < features; j++)
+        {
+            X(i, j) = ( X(i, j) - mu[X(i, features)](j, 1)) 
+                        / sqrt( sig[X(i, features)] (j, j));
+        }
+    }
+
 }
+
 
 ostream& 
 operator<<(ostream &os, const Sample &s)
