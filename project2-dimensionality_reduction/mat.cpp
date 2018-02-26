@@ -61,15 +61,12 @@ Mat::buildMatrix(vector<Sample> &c)
         mu.push_back(mean(t2, features));
         sig.push_back(cov(t2, features));
     }
+    nX = X;
     for(int i = 0; i < sz; i++)
-    {
         for(int j = 0; j < features; j++)
-        {
-            X(i, j) = ( X(i, j) - mu[X(i, features)](j, 1)) 
+            nX(i, j) = ( X(i, j) - mu[X(i, features)](j, 1)) 
                         / sqrt( sig[X(i, features)] (j, j));
-        }
-    }
-
+    cout << nX;
 }
 
 
