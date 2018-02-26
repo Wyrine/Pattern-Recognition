@@ -3,6 +3,12 @@
 
 using namespace std;
 
+double
+compareFunc(const string &curStr)
+{
+    return (curStr == "No") ? 0 : 1;
+}
+
 int
 main(int argc, char** argv)
 {
@@ -11,6 +17,6 @@ main(int argc, char** argv)
         cerr << "Usage: ./driver trainFile testFile numFeatures numClasses\n";
         return(1);
     }
-    Mat mat(argv[1], atoi(argv[3]), atoi(argv[4]), true);
+    Mat mat(argv[1], atoi(argv[3]), atoi(argv[4]), compareFunc);
     return 0;
 }

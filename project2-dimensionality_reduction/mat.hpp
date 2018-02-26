@@ -21,7 +21,7 @@ struct Sample
     vector<double> sample;
     Sample(const uint& _features, const double samp[])
     {
-        for(int i = 0; i < _features; i++)
+        for(int i = 0; i < _features + 1; i++)
             sample.push_back(samp[i]);
     }
     double & operator[](const int& i) { return sample[i]; }
@@ -31,10 +31,10 @@ struct Sample
 class Mat
 {
     uint classes, features;
-    //int totalElems;
-    vector<Matrix> dataSet, mean, cov;
+    vector<Matrix> dataSet, mu, sig;
+    double (*compFunc)(const string &);
     bool getSamp(ifstream &, double []);
     void buildMatrix(vector<Sample> &);
 public:
-    Mat(const char*, const uint&, const uint&, bool pp);
+    Mat(const char*, const uint&, const uint&, double (*_compFunc)(const string &));
 };

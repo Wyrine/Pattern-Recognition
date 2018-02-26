@@ -3,38 +3,46 @@
 
 using namespace std;
 
-Mat::Mat(const char* fName, const uint& _features, const uint& _classes, bool pp)
+Mat::Mat(const char* fName, const uint& _features, const uint& _classes,
+            double (*_compFunc)(const string &))
 {
     ifstream input(fName);
-    vector<Sample> c0, c1; 
-    double samp[_features];
-    string curClass;
+    vector<Sample> d; 
+    double samp[_features+1];
+    string tmp;
 
     classes = _classes;
     features = _features;
+    compFunc = _compFunc;
+
     if(! input.is_open() )
     {
         fprintf(stderr, "Unable to open %s, exiting.\n", fName);
         exit(1);
     }
-    getline(input, curClass);
+    getline(input, tmp);
     while( getSamp(input, samp) )
     {
         Sample s(features, samp);
-        input >> curClass;
-        if(curClass == "No") c0.push_back(s);
-        else c1.push_back(s);
-    }    
+        d.push_back(s);
+    }
     input.close();
-    buildMatrix(c0);
+
+    buildMatrix(d);
 }
 
 bool
 Mat::getSamp(ifstream &input, double samp[])
 {
     int i;
+    string tmp;
+
     for(i = 0; i < features && (input >> samp[i]); i++);
-    if( i < 7) return false;
+    if( i < features) return false;
+
+    input >> tmp;
+    samp[i] = compFunc(tmp);
+    
     return true;
 }
 
@@ -42,14 +50,12 @@ void
 Mat::buildMatrix(vector<Sample> &c)
 {
     int sz = c.size();
-    Matrix tmp(sz, features);
+    Matrix tmp(sz, features+1);
     
     for(int i = 0; i < sz; i++)
-        for(int j = 0; j < features; j++)
+        for(int j = 0; j < features + 1; j++)
             tmp(i, j) = c[i][j];
     cout << tmp;
-    exit(1);
-    dataSet.push_back(tmp);
 }
 
 ostream& 
