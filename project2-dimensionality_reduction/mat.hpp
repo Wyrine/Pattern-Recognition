@@ -34,14 +34,18 @@ struct Sample
 class Mat
 {
     uint classes, features;
-    Matrix X, nX, Xte, nXte, pX, pXte;
-    vector<Matrix> mu, sig;
+    Matrix X, nX, Xte, nXte, pX, pXte, fX, fXte, fW;
+    vector<Matrix> mu, sig, pMu, pSig, fMu, fSig;
+
     double (*compFunc)(const string &);
     bool getSamp(ifstream &, double []);
     void buildMatrix(vector<Sample> &, Matrix&);
     void readFile(const char*, Matrix &);
+    void addLabels(Matrix &, const Matrix &);
 public:
+    void getParams();
     Mat(const char*, const char*, const uint&, const uint&, 
             double (*_compFunc)(const string &));
-    Matrix &PCA(float maxErr = 0.1);
+    void PCA(float maxErr = 0.1);
+    void FLD();
 };

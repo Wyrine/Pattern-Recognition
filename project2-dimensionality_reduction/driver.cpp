@@ -19,5 +19,6 @@ main(int argc, char** argv)
     }
     Mat mat(argv[1], argv[2], atoi(argv[3]), atoi(argv[4]), compareFunc);
     mat.PCA();
+    mat.FLD();
     return 0;
 }

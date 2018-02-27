@@ -15,6 +15,13 @@ Mat::Mat(const char* tr, const char* te, const uint& _features,
     nX = subMatrix(X, 0, 0, X.getRow() -1, features - 1);
     nXte = subMatrix(Xte, 0, 0, Xte.getRow() -1, features -1);
     normalize(nX, nXte, features, 1);
+
+    for(int i = 0; i < classes; i++)
+    {
+        Matrix t2 = getType(X, i);
+        sig.push_back( cov(t2, features) );
+        mu.push_back( mean(t2, features) );
+    }
 }
 
 void
@@ -39,7 +46,6 @@ Mat::readFile(const char* fName, Matrix &_X)
     input.close();
     buildMatrix(d, _X);
 }
-
 
 bool
 Mat::getSamp(ifstream &input, double samp[])
@@ -66,7 +72,7 @@ Mat::buildMatrix(vector<Sample> &c, Matrix & _X)
             _X(i, j) = c[i][j];
 }
 
-Matrix &
+void
 Mat::PCA(float maxErr)
 {
     pX = nX;
@@ -74,7 +80,43 @@ Mat::PCA(float maxErr)
     int numDrop = pca(pX, pXte, features, maxErr, 1);
     pX = subMatrix(pX, 0, 0, pX.getRow() - 1, numDrop - 1);
     pXte = subMatrix(pXte, 0, 0, pXte.getRow() - 1, numDrop - 1);
-    return nX;
+    addLabels(pX, X);
+    addLabels(pXte, Xte);
+    for( int i =  0; i < classes; i++)
+    {
+        Matrix m = getType(pX, i);
+        pMu.push_back( mean(m, m.getCol() ) );
+        pSig.push_back( cov(m, m.getCol() ) );
+    }
+}
+
+void
+Mat::addLabels(Matrix &dest, const Matrix & src)
+{
+    Matrix tmp(dest.getRow(), dest.getCol() + 1);
+    uint lab_ind = src.getCol() - 1;
+    uint i, j;
+    for(i = 0; i < dest.getRow(); i++)
+    {
+        for(j = 0; j < dest.getCol(); j++)
+            tmp(i, j) = dest(i, j);
+        tmp(i, j) = src(i, lab_ind);
+    }
+    dest = tmp;
+}
+
+void
+Mat::FLD()
+{
+    Matrix mVec;
+    mVec = mu[0];
+    fW = (sig[0].getRow() - 1) * sig[0];
+    for(uint i = 1; i < classes; i++)
+    {
+        mVec = mVec - mu[i];
+        fW = fW + (sig[i].getRow() - 1) * sig[i];
+    }
+    fW = inverse(fW) ->* mVec;
 }
 
 ostream& 
