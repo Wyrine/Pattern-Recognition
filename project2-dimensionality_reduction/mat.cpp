@@ -116,7 +116,19 @@ Mat::FLD()
         mVec = mVec - mu[i];
         fW = fW + (sig[i].getRow() - 1) * sig[i];
     }
+    Matrix sW = fW;
     fW = inverse(fW) ->* mVec;
+    mVec = mVec ->* transpose(mVec);
+    Matrix lossFunc = ( transpose(fW) ->* mVec ->* fW)
+                    / ( transpose(fW) ->* sW ->* fW);
+    cout << mVec << lossFunc;
+    /*
+        fW is omega is 7x1
+        mVec is Sb and is 7x7
+        sW is also 7x7
+        
+        Next, need to transform data set
+    */
 }
 
 ostream& 
