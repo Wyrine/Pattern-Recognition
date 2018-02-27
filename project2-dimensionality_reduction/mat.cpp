@@ -12,16 +12,9 @@ Mat::Mat(const char* tr, const char* te, const uint& _features,
     compFunc = _compFunc;
     readFile(tr, X);
     readFile(te, Xte);
-    nX = X;
-    nXte = Xte;
-    normalize(nX, nXte, 7, 1);
-
-    for(int i = 0; i < classes; i++)
-    {
-        Matrix t2 = getType(nX, i);
-        mu.push_back(mean(t2, features));
-        sig.push_back(cov(t2, features));
-    }
+    nX = subMatrix(X, 0, 0, X.getRow() -1, features - 1);
+    nXte = subMatrix(Xte, 0, 0, Xte.getRow() -1, features -1);
+    normalize(nX, nXte, features, 1);
 }
 
 void
@@ -74,10 +67,14 @@ Mat::buildMatrix(vector<Sample> &c, Matrix & _X)
 }
 
 Matrix &
-Mat::PCA(const double &maxErr) const
+Mat::PCA(float maxErr)
 {
-    Matrix rv = X;
-    return rv;
+    pX = nX;
+    pXte = nXte;
+    int numDrop = pca(pX, pXte, features, maxErr, 1);
+    pX = subMatrix(pX, 0, 0, pX.getRow() - 1, numDrop - 1);
+    pXte = subMatrix(pXte, 0, 0, pXte.getRow() - 1, numDrop - 1);
+    return nX;
 }
 
 ostream& 

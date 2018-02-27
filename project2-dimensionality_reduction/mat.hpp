@@ -34,7 +34,7 @@ struct Sample
 class Mat
 {
     uint classes, features;
-    Matrix X, nX, Xte, nXte, pX;
+    Matrix X, nX, Xte, nXte, pX, pXte;
     vector<Matrix> mu, sig;
     double (*compFunc)(const string &);
     bool getSamp(ifstream &, double []);
@@ -43,5 +43,5 @@ class Mat
 public:
     Mat(const char*, const char*, const uint&, const uint&, 
             double (*_compFunc)(const string &));
-    Matrix &PCA(const double &maxErr = 0.1) const;
+    Matrix &PCA(float maxErr = 0.1);
 };
