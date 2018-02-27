@@ -16,6 +16,9 @@
 #define PI_CONST 1.0 / pow(2*M_PI, features/2)
 typedef unsigned int uint;
 
+int normalize(Matrix &, Matrix &, const int, const int);
+int pca(Matrix &, Matrix &, const int, const float, const int);
+
 struct Sample
 {
     vector<double> sample;
@@ -31,11 +34,14 @@ struct Sample
 class Mat
 {
     uint classes, features;
-    Matrix X, nX;
-    vector<Matrix> dataSet, mu, sig;
+    Matrix X, nX, Xte, nXte, pX;
+    vector<Matrix> mu, sig;
     double (*compFunc)(const string &);
     bool getSamp(ifstream &, double []);
-    void buildMatrix(vector<Sample> &);
+    void buildMatrix(vector<Sample> &, Matrix&);
+    void readFile(const char*, Matrix &);
 public:
-    Mat(const char*, const uint&, const uint&, double (*_compFunc)(const string &));
+    Mat(const char*, const char*, const uint&, const uint&, 
+            double (*_compFunc)(const string &));
+    Matrix &PCA(const double &maxErr = 0.1) const;
 };

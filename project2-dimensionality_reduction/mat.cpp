@@ -3,17 +3,34 @@
 
 using namespace std;
 
-Mat::Mat(const char* fName, const uint& _features, const uint& _classes,
-            double (*_compFunc)(const string &))
+Mat::Mat(const char* tr, const char* te, const uint& _features, 
+            const uint& _classes, double (*_compFunc)(const string &))
 {
-    ifstream input(fName);
-    vector<Sample> d; 
-    double samp[_features+1];
-    string tmp;
 
     classes = _classes;
     features = _features;
     compFunc = _compFunc;
+    readFile(tr, X);
+    readFile(te, Xte);
+    nX = X;
+    nXte = Xte;
+    normalize(nX, nXte, 7, 1);
+
+    for(int i = 0; i < classes; i++)
+    {
+        Matrix t2 = getType(nX, i);
+        mu.push_back(mean(t2, features));
+        sig.push_back(cov(t2, features));
+    }
+}
+
+void
+Mat::readFile(const char* fName, Matrix &_X)
+{
+    vector<Sample> d;
+    double samp[features+1];
+    string tmp;
+    ifstream input(fName);
 
     if(! input.is_open() )
     {
@@ -27,9 +44,9 @@ Mat::Mat(const char* fName, const uint& _features, const uint& _classes,
         d.push_back(s);
     }
     input.close();
-
-    buildMatrix(d);
+    buildMatrix(d, _X);
 }
+
 
 bool
 Mat::getSamp(ifstream &input, double samp[])
@@ -47,28 +64,21 @@ Mat::getSamp(ifstream &input, double samp[])
 }
 
 void
-Mat::buildMatrix(vector<Sample> &c)
+Mat::buildMatrix(vector<Sample> &c, Matrix & _X)
 {
     int sz = c.size();
-    X.createMatrix(sz, features+1);
+    _X.createMatrix(sz, features+1);
     for(int i = 0; i < sz; i++)
         for(int j = 0; j < features + 1; j++)
-            X(i, j) = c[i][j];
-    //should make this it's own function
-    for(int i = 0; i < classes; i++)
-    {
-        Matrix t2 = getType(X, i);
-        mu.push_back(mean(t2, features));
-        sig.push_back(cov(t2, features));
-    }
-    nX = X;
-    for(int i = 0; i < sz; i++)
-        for(int j = 0; j < features; j++)
-            nX(i, j) = ( X(i, j) - mu[X(i, features)](j, 1)) 
-                        / sqrt( sig[X(i, features)] (j, j));
-    cout << nX;
+            _X(i, j) = c[i][j];
 }
 
+Matrix &
+Mat::PCA(const double &maxErr) const
+{
+    Matrix rv = X;
+    return rv;
+}
 
 ostream& 
 operator<<(ostream &os, const Sample &s)

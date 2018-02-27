@@ -17,6 +17,7 @@ main(int argc, char** argv)
         cerr << "Usage: ./driver trainFile testFile numFeatures numClasses\n";
         return(1);
     }
-    Mat mat(argv[1], atoi(argv[3]), atoi(argv[4]), compareFunc);
+    Mat mat(argv[1], argv[2], atoi(argv[3]), atoi(argv[4]), compareFunc);
+    mat.PCA();
     return 0;
 }
