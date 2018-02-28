@@ -18,7 +18,7 @@ main(int argc, char** argv)
         return(1);
     }
     Mat mat(argv[1], argv[2], atoi(argv[3]), atoi(argv[4]), compareFunc);
-    double prior[atoi(argv[4])]; //= {mat.getProb0(), mat.getProb1()};
+    double prior[atoi(argv[4])]; 
     prior[0] = mat.getProb0();
     prior[1] = mat.getProb1();
     mat.PCA();

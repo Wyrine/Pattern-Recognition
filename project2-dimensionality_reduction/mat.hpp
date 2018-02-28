@@ -12,7 +12,7 @@
 #include "Pr.h"
 
 
-#define STEP_SIZE 0.005
+#define STEP_SIZE 0.05
 #define PI_CONST 1.0 / pow(2*M_PI, (testData.getCol() - 1 )/2)
 typedef unsigned int uint;
 
