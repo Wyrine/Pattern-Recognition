@@ -48,9 +48,9 @@ class Mat
 public:
     Mat(const char*, const char*, const uint&, const uint&, 
             double (*_compFunc)(const string &));
-    Matrix& runCase1();
-    Matrix& runCase2();
-    Matrix& runCase3();
+    void runCase1(const double []);
+    void runCase2(const double []);
+    void runCase3(const double []);
     void PCA(float maxErr = 0.1);
     void FLD();
 };

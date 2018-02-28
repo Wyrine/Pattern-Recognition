@@ -115,7 +115,6 @@ Mat::FLD()
     fXte = subMatrix(nXte, 0, 0, nXte.getRow() - 1, features - 1) ->* fW;
     //getting means
     setParams(fMu, fSig, fX, fXte);
-    double priors[] = { 0.5, 0.5};
 }
 
 void
@@ -133,32 +132,81 @@ Mat::setParams(vector<Matrix> & Mean, vector<Matrix> & Cov, Matrix & _X, Matrix 
     }
 }
 
-Matrix &
-Mat::runCase1()
+void
+Mat::runCase1(const double prior[])
 {
+    vector<Matrix> tmpSig;
+    Matrix identity(features, features);
+    for(int i = 0; i < features; i++)
+        identity(i, i) = 1;
+    for(int i = 0; i < classes; i++)
+        tmpSig.push_back( sqrt(sig[0](0, 0)) * identity );
+    Matrix rv(nXte.getRow(), 1);
+    getProb(nXte, prior, tmpSig, mu, rv);
+    cout << "Case 1 -- normalized:\n" << rv;
+
+    tmpSig.clear();
+    rv.createMatrix(pXte.getRow(), 1);
+    identity.createMatrix(pXte.getCol() -1, pXte.getCol() -1 );
+    for(int i = 0; i < pXte.getCol() - 1; i++)
+        identity(i, i) = 1;
+
+    for(int i = 0; i < classes; i++)
+        tmpSig.push_back( sqrt(pSig[0](0, 0) ) * identity );
+    getProb(pXte, prior, tmpSig, pMu, rv);
+    cout << "\n\n\nCase 1 -- PCA:\n" << rv;
+
+
+    tmpSig.clear();
+    rv.createMatrix(fXte.getRow(), 1);
+    identity.createMatrix(1, 1);
+    identity(0, 0) = 1;
+    for(int i = 0; i < classes; i++)
+        tmpSig.push_back( sqrt( mtod(fSig[0]) ) * identity );
+    getProb(fXte, prior, tmpSig, fMu, rv);
+    cout << "\n\n\nCase 1 -- FLD:\n" << rv;
 }
 
-Matrix &
-Mat::runCase2()
+void
+Mat::runCase2(const double prior[])
 {
+    vector<Matrix> tmpSig;
+    for(int i = 0; i < classes; i++)
+        tmpSig.push_back(sig[0]);
+    Matrix rv(nXte.getRow(), 1);
+    getProb(nXte, prior, tmpSig, mu, rv);
+    cout << "Case 2 -- normalized:\n" << rv;
+    
+    tmpSig.clear();
+    rv.createMatrix(pXte.getRow(), 1);
+
+    for(int i = 0; i < classes; i++)
+        tmpSig.push_back(pSig[0]);
+    getProb(pXte, prior, tmpSig, pMu, rv);
+    cout << "\n\n\nCase 2 -- PCA:\n" << rv;
+    
+    tmpSig.clear();
+    rv.createMatrix(fXte.getRow(), 1);
+    for(int i = 0; i < classes; i++)
+        tmpSig.push_back( fSig[0] );
+    getProb(fXte, prior, tmpSig, fMu, rv);
+    cout << "\n\n\nCase 2 -- FLD:\n" << rv;
 }
 
-Matrix &
-Mat::runCase3()
+void
+Mat::runCase3(const double prior[])
 {
-    double prior[] = {0.5, 0.5};
     Matrix rv(nXte.getRow(), 1);
     getProb(nXte, prior, sig, mu, rv);
-    cout << "normalized:\n" << rv;//getProb(nXte, prior, sig, mu);
+    cout << "Case 3 -- normalized:\n" << rv;
 
     rv.createMatrix(pXte.getRow(), 1);
     getProb(pXte, prior, pSig, pMu, rv);
-    cout << "\n\n\nPCA:\n" << rv;
+    cout << "\n\n\nCase 3 -- PCA:\n" << rv;
     
     rv.createMatrix(fXte.getRow(), 1);
     getProb(fXte, prior, fSig, fMu, rv);
-    cout << "\n\n\nFLD:\n" << rv;
-    return rv;
+    cout << "\n\n\nCase 3 -- FLD:\n" << rv;
 }
 
 Matrix &
