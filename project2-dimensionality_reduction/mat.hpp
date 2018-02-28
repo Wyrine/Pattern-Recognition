@@ -12,7 +12,7 @@
 #include "Pr.h"
 
 
-#define STEP_SIZE 0.000005
+#define STEP_SIZE 0.005
 #define PI_CONST 1.0 / pow(2*M_PI, (testData.getCol() - 1 )/2)
 typedef unsigned int uint;
 
@@ -45,7 +45,10 @@ class Mat
     void setParams(vector<Matrix> &, vector<Matrix> &, Matrix &, Matrix &);
     Matrix & getProb(Matrix&, const double [], const vector<Matrix> &,
                         const vector<Matrix> &, Matrix&);
+    void generateEvals(const Matrix &) const;
 public:
+    double getProb0() { return ((double) getType(X, 0).getRow() ) / X.getRow(); }
+    double getProb1() { return ((double) getType(X, 1).getRow() ) / X.getRow(); }
     Mat(const char*, const char*, const uint&, const uint&, 
             double (*_compFunc)(const string &));
     void runCase1(const double []);

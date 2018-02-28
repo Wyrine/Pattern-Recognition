@@ -20,6 +20,39 @@ Mat::Mat(const char* tr, const char* te, const uint& _features,
 }
 
 void
+Mat::generateEvals(const Matrix & results) const
+{
+    double accuracy, precision;
+    double sens, spec, tp=0, tn=0, fp=0, fn=0;
+
+    for(int i = 0; i < results.getRow(); i++)
+    {
+        if(results(i, 0) == results(i, 1))
+        {
+            if( results(i, 0) ) tp++;
+            else tn++;
+        }
+        else
+        {
+            if( results(i, 0) ) fp++;
+            else fn++;
+
+        }
+    }
+    tp /= results.getRow();
+    tn /= results.getRow();
+    fp /= results.getRow();
+    fn /= results.getRow();
+    accuracy = (tp + tn) / (tp + tn + fp + fn);
+    sens = tp / (tp + fn);
+    spec = tn / (tn + fp);
+    precision = tp / (tp + fp);
+    printf("TP: %lf | TN: %lf | FP: %lf | FN: %lf | \n\tAcc: %lf | Sens: %lf | Spec: %lf | Prec: %lf\n", tp, tn, fp, fn,
+    accuracy, sens, spec, precision);
+
+}
+
+void
 Mat::readFile(const char* fName, Matrix &_X)
 {
     vector<Sample> d;
@@ -135,6 +168,7 @@ Mat::setParams(vector<Matrix> & Mean, vector<Matrix> & Cov, Matrix & _X, Matrix 
 void
 Mat::runCase1(const double prior[])
 {
+    cout << "Case 1:\n";
     vector<Matrix> tmpSig;
     Matrix identity(features, features);
     for(int i = 0; i < features; i++)
@@ -143,7 +177,8 @@ Mat::runCase1(const double prior[])
         tmpSig.push_back( sqrt(sig[0](0, 0)) * identity );
     Matrix rv(nXte.getRow(), 1);
     getProb(nXte, prior, tmpSig, mu, rv);
-    cout << "Case 1 -- normalized:\n" << rv;
+    //cout << "Case 1 -- normalized:\n" << rv;
+    generateEvals(rv);
 
     tmpSig.clear();
     rv.createMatrix(pXte.getRow(), 1);
@@ -154,7 +189,8 @@ Mat::runCase1(const double prior[])
     for(int i = 0; i < classes; i++)
         tmpSig.push_back( sqrt(pSig[0](0, 0) ) * identity );
     getProb(pXte, prior, tmpSig, pMu, rv);
-    cout << "\n\n\nCase 1 -- PCA:\n" << rv;
+    //cout << "\n\n\nCase 1 -- PCA:\n" << rv;
+    generateEvals(rv);
 
 
     tmpSig.clear();
@@ -164,18 +200,22 @@ Mat::runCase1(const double prior[])
     for(int i = 0; i < classes; i++)
         tmpSig.push_back( sqrt( mtod(fSig[0]) ) * identity );
     getProb(fXte, prior, tmpSig, fMu, rv);
-    cout << "\n\n\nCase 1 -- FLD:\n" << rv;
+    //cout << "\n\n\nCase 1 -- FLD:\n" << rv;
+    generateEvals(rv);
+    cout << "\n\n\n\n\n";
 }
 
 void
 Mat::runCase2(const double prior[])
 {
+    cout << "Case 2:\n";
     vector<Matrix> tmpSig;
     for(int i = 0; i < classes; i++)
         tmpSig.push_back(sig[0]);
     Matrix rv(nXte.getRow(), 1);
     getProb(nXte, prior, tmpSig, mu, rv);
-    cout << "Case 2 -- normalized:\n" << rv;
+    //cout << "Case 2 -- normalized:\n" << rv;
+    generateEvals(rv);
     
     tmpSig.clear();
     rv.createMatrix(pXte.getRow(), 1);
@@ -183,30 +223,38 @@ Mat::runCase2(const double prior[])
     for(int i = 0; i < classes; i++)
         tmpSig.push_back(pSig[0]);
     getProb(pXte, prior, tmpSig, pMu, rv);
-    cout << "\n\n\nCase 2 -- PCA:\n" << rv;
+    //cout << "\n\n\nCase 2 -- PCA:\n" << rv;
+    generateEvals(rv);
     
     tmpSig.clear();
     rv.createMatrix(fXte.getRow(), 1);
     for(int i = 0; i < classes; i++)
         tmpSig.push_back( fSig[0] );
     getProb(fXte, prior, tmpSig, fMu, rv);
-    cout << "\n\n\nCase 2 -- FLD:\n" << rv;
+    //cout << "\n\n\nCase 2 -- FLD:\n" << rv;
+    generateEvals(rv);
+    cout << "\n\n\n\n\n";
 }
 
 void
 Mat::runCase3(const double prior[])
 {
+    cout << "Case 3:\n";
     Matrix rv(nXte.getRow(), 1);
     getProb(nXte, prior, sig, mu, rv);
-    cout << "Case 3 -- normalized:\n" << rv;
+    //cout << "Case 3 -- normalized:\n" << rv;
+    generateEvals(rv);
 
     rv.createMatrix(pXte.getRow(), 1);
     getProb(pXte, prior, pSig, pMu, rv);
-    cout << "\n\n\nCase 3 -- PCA:\n" << rv;
+    //cout << "\n\n\nCase 3 -- PCA:\n" << rv;
+    generateEvals(rv);
     
     rv.createMatrix(fXte.getRow(), 1);
     getProb(fXte, prior, fSig, fMu, rv);
-    cout << "\n\n\nCase 3 -- FLD:\n" << rv;
+    //cout << "\n\n\nCase 3 -- FLD:\n" << rv;
+    generateEvals(rv);
+    cout << "\n\n\n\n\n";
 }
 
 Matrix &
