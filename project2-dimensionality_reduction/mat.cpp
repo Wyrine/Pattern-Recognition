@@ -16,12 +16,7 @@ Mat::Mat(const char* tr, const char* te, const uint& _features,
     nXte = subMatrix(Xte, 0, 0, Xte.getRow() -1, features -1);
     normalize(nX, nXte, features, 1);
 
-    for(int i = 0; i < classes; i++)
-    {
-        Matrix t2 = getType(X, i);
-        sig.push_back( cov(t2, features) );
-        mu.push_back( mean(t2, features) );
-    }
+    setParams(mu, sig, nX, nXte);
 }
 
 void
@@ -80,14 +75,7 @@ Mat::PCA(float maxErr)
     int numDrop = pca(pX, pXte, features, maxErr, 1);
     pX = subMatrix(pX, 0, 0, pX.getRow() - 1, numDrop - 1);
     pXte = subMatrix(pXte, 0, 0, pXte.getRow() - 1, numDrop - 1);
-    addLabels(pX, X);
-    addLabels(pXte, Xte);
-    for( int i =  0; i < classes; i++)
-    {
-        Matrix m = getType(pX, i);
-        pMu.push_back( mean(m, m.getCol() ) );
-        pSig.push_back( cov(m, m.getCol() ) );
-    }
+    setParams(pMu, pSig, pX, pXte);
 }
 
 void
@@ -121,14 +109,84 @@ Mat::FLD()
     mVec = mVec ->* transpose(mVec);
     Matrix lossFunc = ( transpose(fW) ->* mVec ->* fW)
                     / ( transpose(fW) ->* sW ->* fW);
-    cout << mVec << lossFunc;
-    /*
-        fW is omega is 7x1
-        mVec is Sb and is 7x7
-        sW is also 7x7
-        
-        Next, need to transform data set
-    */
+
+    //projecting
+    fX = subMatrix(nX, 0, 0, nX.getRow() - 1, features - 1) ->* fW;
+    fXte = subMatrix(nXte, 0, 0, nXte.getRow() - 1, features - 1) ->* fW;
+    //getting means
+    setParams(fMu, fSig, fX, fXte);
+    double priors[] = { 0.5, 0.5};
+}
+
+void
+Mat::setParams(vector<Matrix> & Mean, vector<Matrix> & Cov, Matrix & _X, Matrix & _Xte)
+{
+    Matrix m;
+    
+    addLabels(_Xte, Xte);
+    addLabels(_X, X);
+    for(int i = 0; i < classes; i++)
+    {
+        m = getType(_X, i);
+        Mean.push_back( mean(m, m.getCol() ) );
+        Cov.push_back( cov(m, m.getCol() ) );
+    }
+}
+
+Matrix &
+Mat::runCase1()
+{
+}
+
+Matrix &
+Mat::runCase2()
+{
+}
+
+Matrix &
+Mat::runCase3()
+{
+    double prior[] = {0.5, 0.5};
+    Matrix rv(nXte.getRow(), 1);
+    getProb(nXte, prior, sig, mu, rv);
+    cout << "normalized:\n" << rv;//getProb(nXte, prior, sig, mu);
+
+    rv.createMatrix(pXte.getRow(), 1);
+    getProb(pXte, prior, pSig, pMu, rv);
+    cout << "\n\n\nPCA:\n" << rv;
+    
+    rv.createMatrix(fXte.getRow(), 1);
+    getProb(fXte, prior, fSig, fMu, rv);
+    cout << "\n\n\nFLD:\n" << rv;
+    return rv;
+}
+
+Matrix &
+Mat::getProb(Matrix &testData, const double prior[], const vector<Matrix> & _sig,
+                const vector<Matrix>& _mean, Matrix & result)
+{
+	int samples = testData.getRow(), choice;
+	Matrix xVec(testData.getCol() - 1, 1), diff;
+    double post, tmp;
+	
+    for(int i = 0; i < samples; i++)
+    {
+        post = tmp = 0;
+        choice = -1;
+        for(int j = 0; j < testData.getCol() - 1; j++)
+		    xVec(j, 0) = testData(i, j);
+        for(int j = 0; j < classes; j++)
+        {
+            diff = xVec - _mean[j];
+            tmp = PI_CONST * 1 / sqrt(det(_sig[j])) * prior[j];
+            tmp *= exp(- mtod(transpose(diff) ->* inverse(_sig[j]) ->* diff) / 2.0);
+            if (tmp >= post) { post = tmp; choice = j; }
+        }
+        result(i, 0) = choice;
+    }
+    
+    addLabels(result, Xte);
+	return result;
 }
 
 ostream& 

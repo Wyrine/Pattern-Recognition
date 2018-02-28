@@ -9,7 +9,7 @@ all: $(EXECUTABLES)
 
 .PHONY: clean
 clean:
-	rm -f core $(EXECUTABLES) *.o
+	rm -f core $(EXECUTABLES) *.o file
 
 .SUFFIXES: .cpp .o
 .cpp.o:

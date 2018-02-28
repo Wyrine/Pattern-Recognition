@@ -13,7 +13,7 @@
 
 
 #define STEP_SIZE 0.000005
-#define PI_CONST 1.0 / pow(2*M_PI, features/2)
+#define PI_CONST 1.0 / pow(2*M_PI, (testData.getCol() - 1 )/2)
 typedef unsigned int uint;
 
 int normalize(Matrix &, Matrix &, const int, const int);
@@ -42,10 +42,15 @@ class Mat
     void buildMatrix(vector<Sample> &, Matrix&);
     void readFile(const char*, Matrix &);
     void addLabels(Matrix &, const Matrix &);
+    void setParams(vector<Matrix> &, vector<Matrix> &, Matrix &, Matrix &);
+    Matrix & getProb(Matrix&, const double [], const vector<Matrix> &,
+                        const vector<Matrix> &, Matrix&);
 public:
-    void getParams();
     Mat(const char*, const char*, const uint&, const uint&, 
             double (*_compFunc)(const string &));
+    Matrix& runCase1();
+    Matrix& runCase2();
+    Matrix& runCase3();
     void PCA(float maxErr = 0.1);
     void FLD();
 };
