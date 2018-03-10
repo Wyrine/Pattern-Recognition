@@ -22,8 +22,7 @@ Mat::Mat(const char* tr, const char* te, const uint& _features,
 void
 Mat::generateEvals(const Matrix & results) const
 {
-    double accuracy, precision;
-    double sens, spec, tp=0, tn=0, fp=0, fn=0;
+    double accuracy, precision, sens, spec, tp=0, tn=0, fp=0, fn=0;
 
     for(int i = 0; i < results.getRow(); i++)
     {
@@ -47,9 +46,8 @@ Mat::generateEvals(const Matrix & results) const
     sens = tp / (tp + fn);
     spec = tn / (tn + fp);
     precision = tp / (tp + fp);
-    printf("TP: %lf | TN: %lf | FP: %lf | FN: %lf | \n\tAcc: %lf | Sens: %lf | Spec: %lf | Prec: %lf\n", tp, tn, fp, fn,
-    accuracy, sens, spec, precision);
-
+    printf("TP: %lf | TN: %lf | FP: %lf | FN: %lf | \n\tAcc: %lf | Sens: %lf | Spec: %lf | Prec: %lf\n", 
+                    tp, tn, fp, fn, accuracy, sens, spec, precision);
 }
 
 void
