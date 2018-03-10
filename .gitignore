@@ -1,5 +1,7 @@
 *.DS_Store
 *.o
 *.swp
+*tst*
 *file
 *old*
+*.dSYM
