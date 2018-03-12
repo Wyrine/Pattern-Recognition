@@ -22,25 +22,14 @@ main(int argc, char** argv)
     double prior[atoi(argv[4])]; 
     prior[0] = mat.getProb0();
     prior[1] = mat.getProb1();
-    mat.PCA();
-    mat.FLD();
-		mat.varyNorm1();
-/*    cout << "Prior from data set: \n\n";
+
+    cout << "Prior from data set: \n\n";
     mat.runCase1(prior);
     mat.runCase2(prior);
     mat.runCase3(prior);
-//    cout << "Varying Prior probailities\n\n"; 
-//		mat.varyProb();
 
-    for(double i = STEP_SIZE; i < 1.0; i+= STEP_SIZE)
-    {
-        prior[0] = i;
-        prior[1] = 1 - i;
-        cout << "Prior for class 0: " << i << " and prior for class 1: " << 1 - i << endl;
-        mat.runCase1(prior);
-        mat.runCase2(prior);
-        mat.runCase3(prior);
-    }
-		*/
+		cout << "Varying Prior probailities\n\n"; 
+		mat.varyCase1();
+
     return 0;
 }
