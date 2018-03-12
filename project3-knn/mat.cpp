@@ -165,6 +165,7 @@ Mat::setParams(vector<Matrix> & Mean, vector<Matrix> & Cov, Matrix & _X, Matrix 
 Mat::varyNorm1()
 {
 		FILE* out = fopen("./codeOutput/Case1_normalized.csv", "w");
+		if(out == NULL){ perror("./codeOutput/Case1_normalized.csv"); exit(1); }
 		double prior[2];
 		for(int i = 0; i < classes; i++)
 				fprintf(out, "PriorClass%d,", i);
@@ -184,6 +185,7 @@ Mat::varyNorm1()
 				getProb(nXte, prior, tmpSig, mu, rv);
 				generateEvals(rv, out);
 		}
+		fclose(out);
 }
 
 		void
