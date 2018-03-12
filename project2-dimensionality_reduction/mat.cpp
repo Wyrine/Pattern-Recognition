@@ -172,7 +172,7 @@ Mat::runCase1(const double prior[])
     for(int i = 0; i < features; i++)
         identity(i, i) = 1;
     for(int i = 0; i < classes; i++)
-        tmpSig.push_back( sqrt(sig[0](0, 0)) * identity );
+        tmpSig.push_back( sqrt(sig[1](0, 0)) * identity );
     Matrix rv(nXte.getRow(), 1);
     getProb(nXte, prior, tmpSig, mu, rv);
     cout << "Normalized X: \n";
@@ -185,7 +185,7 @@ Mat::runCase1(const double prior[])
         identity(i, i) = 1;
 
     for(int i = 0; i < classes; i++)
-        tmpSig.push_back( sqrt(pSig[0](0, 0) ) * identity );
+        tmpSig.push_back( sqrt(pSig[1](0, 0) ) * identity );
     getProb(pXte, prior, tmpSig, pMu, rv);
     cout << "PCA: \n";
     generateEvals(rv);
@@ -196,7 +196,7 @@ Mat::runCase1(const double prior[])
     identity.createMatrix(1, 1);
     identity(0, 0) = 1;
     for(int i = 0; i < classes; i++)
-        tmpSig.push_back( sqrt( mtod(fSig[0]) ) * identity );
+        tmpSig.push_back( sqrt( mtod(fSig[1]) ) * identity );
     getProb(fXte, prior, tmpSig, fMu, rv);
     cout << "FLD: \n";
     generateEvals(rv);
