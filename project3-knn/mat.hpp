@@ -53,6 +53,12 @@ protected:
 		void varyNorm1();
 		void varyPCA1();
 		void varyFLD1();
+		void varyNorm2();
+		void varyPCA2();
+		void varyFLD2();
+		void varyNorm3();
+		void varyPCA3();
+		void varyFLD3();
 public:
     double getProb0() { return ((double) getType(X, 0).getRow() ) / X.getRow(); }
     double getProb1() { return ((double) getType(X, 1).getRow() ) / X.getRow(); }
@@ -62,15 +68,10 @@ public:
 		void varyCase1();
 		void varyCase2();
 		void varyCase3();
+		void varyAllCases();
     void runCase1(const double []);
     void runCase2(const double []);
     void runCase3(const double []);
-		void varyNorm2();
-		void varyPCA2();
-		void varyFLD2();
-		void varyNorm3();
-		void varyPCA3();
-		void varyFLD3();
     void PCA(float maxErr = 0.1);
     void FLD();
 		void varyProb(const int);

@@ -1,5 +1,4 @@
 #include <iostream>
-//#include <omp.h>
 #include "mat.hpp"
 
 using namespace std;
@@ -28,8 +27,9 @@ main(int argc, char** argv)
     mat.runCase2(prior);
     mat.runCase3(prior);
 
-		cout << "Varying Prior probailities\n\n"; 
-		mat.varyCase1();
+		cout << "Varying Prior probailities and writing to files\n"; 
+		mat.varyAllCases();
+		cout << "Done\n"; 
 
     return 0;
 }

@@ -166,6 +166,51 @@ Mat::setParams(vector<Matrix> & Mean, vector<Matrix> & Cov, Matrix & _X, Matrix 
 		}
 }
 
+
+		void
+Mat::runCase1(const double prior[])
+{
+		cout << "Case 1 Scores:\n";
+		for(int i = 0; i < classes; i++)
+				fprintf(stdout, "PriorClass%d,", i);
+		fprintf(stdout,"TP,TN,FP,FN,Accuracy,Sensitivity(Recall),Specificity,Precision\n");
+		vector<Matrix> tmpSig;
+		Matrix identity(features, features);
+		for(int i = 0; i < features; i++)
+				identity(i, i) = 1;
+		for(int i = 0; i < classes; i++)
+				tmpSig.push_back( sqrt(sig[1](0, 0)) * identity );
+		Matrix rv(nXte.getRow(), 1);
+		getProb(nXte, prior, tmpSig, mu, rv);
+		cout << "Normalized X: \n";
+		generateEvals(rv, prior);
+
+		tmpSig.clear();
+		rv.createMatrix(pXte.getRow(), 1);
+		identity.createMatrix(pXte.getCol() -1, pXte.getCol() -1 );
+		for(int i = 0; i < pXte.getCol() - 1; i++)
+				identity(i, i) = 1;
+
+		for(int i = 0; i < classes; i++)
+				tmpSig.push_back( sqrt(pSig[1](0, 0) ) * identity );
+		getProb(pXte, prior, tmpSig, pMu, rv);
+		cout << "PCA: \n";
+		generateEvals(rv, prior);
+
+
+		tmpSig.clear();
+		rv.createMatrix(fXte.getRow(), 1);
+		identity.createMatrix(1, 1);
+		identity(0, 0) = 1;
+		for(int i = 0; i < classes; i++)
+				tmpSig.push_back( sqrt( mtod(fSig[1]) ) * identity );
+		getProb(fXte, prior, tmpSig, fMu, rv);
+		cout << "FLD: \n";
+		generateEvals(rv, prior);
+
+		cout << "\n\n\n\n\n";
+}
+
 		void
 Mat::varyNorm1()
 {
@@ -192,16 +237,6 @@ Mat::varyNorm1()
 		fclose(out);
 }
 
-		void
-Mat::varyCase1()
-{
-		thread t(&Mat::varyNorm1, this);
-		thread t1(&Mat::varyPCA1, this);
-		thread t2(&Mat::varyFLD1, this);
-		t.join();
-		t1.join();
-		t2.join();
-}
 
 		void
 Mat::varyPCA1()
@@ -256,50 +291,6 @@ Mat::varyFLD1()
 }
 
 		void
-Mat::runCase1(const double prior[])
-{
-		cout << "Case 1 Scores:\n";
-		for(int i = 0; i < classes; i++)
-				fprintf(stdout, "PriorClass%d,", i);
-		fprintf(stdout,"TP,TN,FP,FN,Accuracy,Sensitivity(Recall),Specificity,Precision\n");
-		vector<Matrix> tmpSig;
-		Matrix identity(features, features);
-		for(int i = 0; i < features; i++)
-				identity(i, i) = 1;
-		for(int i = 0; i < classes; i++)
-				tmpSig.push_back( sqrt(sig[1](0, 0)) * identity );
-		Matrix rv(nXte.getRow(), 1);
-		getProb(nXte, prior, tmpSig, mu, rv);
-		cout << "Normalized X: \n";
-		generateEvals(rv, prior);
-
-		tmpSig.clear();
-		rv.createMatrix(pXte.getRow(), 1);
-		identity.createMatrix(pXte.getCol() -1, pXte.getCol() -1 );
-		for(int i = 0; i < pXte.getCol() - 1; i++)
-				identity(i, i) = 1;
-
-		for(int i = 0; i < classes; i++)
-				tmpSig.push_back( sqrt(pSig[1](0, 0) ) * identity );
-		getProb(pXte, prior, tmpSig, pMu, rv);
-		cout << "PCA: \n";
-		generateEvals(rv, prior);
-
-
-		tmpSig.clear();
-		rv.createMatrix(fXte.getRow(), 1);
-		identity.createMatrix(1, 1);
-		identity(0, 0) = 1;
-		for(int i = 0; i < classes; i++)
-				tmpSig.push_back( sqrt( mtod(fSig[1]) ) * identity );
-		getProb(fXte, prior, tmpSig, fMu, rv);
-		cout << "FLD: \n";
-		generateEvals(rv, prior);
-
-		cout << "\n\n\n\n\n";
-}
-
-		void
 Mat::runCase2(const double prior[])
 {
 		cout << "Case 2 Scores:\n";
@@ -333,6 +324,79 @@ Mat::runCase2(const double prior[])
 }
 
 		void
+Mat::varyNorm2()
+{
+		FILE* out = fopen("./performance/Case2_Normalized.csv", "w");
+		if(out == NULL){ perror("./performance/Case2_Normalized.csv"); exit(1); }
+
+		for(int i = 0; i < classes; i++) fprintf(out, "PriorClass%d,", i);
+		fprintf(out,"TP,TN,FP,FN,Accuracy,Sensitivity(Recall),Specificity,Precision\n");
+		
+		double prior[2];
+		vector<Matrix> tmpSig;
+		for(int i = 0; i < classes; i++)
+				tmpSig.push_back(sig[0]);
+
+		for(prior[0] = STEP_SIZE; prior[0] <= 1.0 - STEP_SIZE; prior[0] += STEP_SIZE)
+		{
+				prior[1] = 1 - prior[0];
+				Matrix rv(nXte.getRow(), 1);
+				getProb(nXte, prior, tmpSig, mu, rv);
+				generateEvals(rv, prior, out);
+		}
+		fclose(out);
+}
+
+
+		void
+Mat::varyPCA2()
+{
+		FILE* out = fopen("./performance/Case2_PCA.csv", "w");
+		if(out == NULL){ perror("./performance/Case2_PCA.csv"); exit(1); }
+
+		for(int i = 0; i < classes; i++) fprintf(out, "PriorClass%d,", i);
+		fprintf(out,"TP,TN,FP,FN,Accuracy,Sensitivity(Recall),Specificity,Precision\n");
+		
+		double prior[2];
+		vector<Matrix> tmpSig;
+		for(int i = 0; i < classes; i++)
+				tmpSig.push_back(pSig[0]);
+
+		for(prior[0] = STEP_SIZE; prior[0] <= 1.0 - STEP_SIZE; prior[0] += STEP_SIZE)
+		{
+				prior[1] = 1 - prior[0];
+				Matrix rv(pXte.getRow(), 1);
+				getProb(pXte, prior, tmpSig, pMu, rv);
+				generateEvals(rv, prior, out);
+		}
+		fclose(out);
+}
+
+		void
+Mat::varyFLD2()
+{
+		FILE* out = fopen("./performance/Case2_FLD.csv", "w");
+		if(out == NULL){ perror("./performance/Case2_FLD.csv"); exit(1); }
+
+		for(int i = 0; i < classes; i++) fprintf(out, "PriorClass%d,", i);
+		fprintf(out,"TP,TN,FP,FN,Accuracy,Sensitivity(Recall),Specificity,Precision\n");
+		
+		double prior[2];
+		vector<Matrix> tmpSig;
+		for(int i = 0; i < classes; i++)
+				tmpSig.push_back(fSig[0]);
+
+		for(prior[0] = STEP_SIZE; prior[0] <= 1.0 - STEP_SIZE; prior[0] += STEP_SIZE)
+		{
+				prior[1] = 1 - prior[0];
+				Matrix rv(fXte.getRow(), 1);
+				getProb(fXte, prior, tmpSig, fMu, rv);
+				generateEvals(rv, prior, out);
+		}
+		fclose(out);
+}
+
+		void
 Mat::runCase3(const double prior[])
 {
 		cout << "Case 3 Scores:\n";
@@ -354,6 +418,76 @@ Mat::runCase3(const double prior[])
 		cout << "FLD: \n";
 		generateEvals(rv, prior);
 		cout << "\n\n\n\n\n";
+}
+
+		void
+Mat::varyNorm3()
+{
+		FILE* out = fopen("./performance/Case3_Normalized.csv", "w");
+		if(out == NULL){ perror("./performance/Case3_Normalized.csv"); exit(1); }
+
+		for(int i = 0; i < classes; i++) fprintf(out, "PriorClass%d,", i);
+		fprintf(out,"TP,TN,FP,FN,Accuracy,Sensitivity(Recall),Specificity,Precision\n");
+		
+		double prior[2];
+		vector<Matrix> tmpSig;
+		for(int i = 0; i < classes; i++)
+				tmpSig.push_back(sig[i]);
+
+		for(prior[0] = STEP_SIZE; prior[0] <= 1.0 - STEP_SIZE; prior[0] += STEP_SIZE)
+		{
+				prior[1] = 1 - prior[0];
+				Matrix rv(nXte.getRow(), 1);
+				getProb(nXte, prior, tmpSig, mu, rv);
+				generateEvals(rv, prior, out);
+		}
+		fclose(out);
+}
+		void
+Mat::varyPCA3()
+{
+		FILE* out = fopen("./performance/Case3_PCA.csv", "w");
+		if(out == NULL){ perror("./performance/Case3_PCA.csv"); exit(1); }
+
+		for(int i = 0; i < classes; i++) fprintf(out, "PriorClass%d,", i);
+		fprintf(out,"TP,TN,FP,FN,Accuracy,Sensitivity(Recall),Specificity,Precision\n");
+		
+		double prior[2];
+		vector<Matrix> tmpSig;
+		for(int i = 0; i < classes; i++)
+				tmpSig.push_back(pSig[i]);
+
+		for(prior[0] = STEP_SIZE; prior[0] <= 1.0 - STEP_SIZE; prior[0] += STEP_SIZE)
+		{
+				prior[1] = 1 - prior[0];
+				Matrix rv(pXte.getRow(), 1);
+				getProb(pXte, prior, tmpSig, pMu, rv);
+				generateEvals(rv, prior, out);
+		}
+		fclose(out);
+}
+		void
+Mat::varyFLD3()
+{
+		FILE* out = fopen("./performance/Case3_FLD.csv", "w");
+		if(out == NULL){ perror("./performance/Case3_FLD.csv"); exit(1); }
+
+		for(int i = 0; i < classes; i++) fprintf(out, "PriorClass%d,", i);
+		fprintf(out,"TP,TN,FP,FN,Accuracy,Sensitivity(Recall),Specificity,Precision\n");
+		
+		double prior[2];
+		vector<Matrix> tmpSig;
+		for(int i = 0; i < classes; i++)
+				tmpSig.push_back(fSig[i]);
+
+		for(prior[0] = STEP_SIZE; prior[0] <= 1.0 - STEP_SIZE; prior[0] += STEP_SIZE)
+		{
+				prior[1] = 1 - prior[0];
+				Matrix rv(fXte.getRow(), 1);
+				getProb(fXte, prior, tmpSig, fMu, rv);
+				generateEvals(rv, prior, out);
+		}
+		fclose(out);
 }
 
 		Matrix &
@@ -383,7 +517,48 @@ Mat::getProb(Matrix &testData, const double prior[], const vector<Matrix> & _sig
 		addLabels(result, Xte);
 		return result;
 }
+		void
+Mat::varyAllCases()
+{
+		thread t(&Mat::varyCase1, this);
+		thread t1(&Mat::varyCase2, this);
+		thread t2(&Mat::varyCase3, this);
+		t.join();
+		t1.join();
+		t2.join();
+}
 
+		void
+Mat::varyCase1()
+{
+		thread t(&Mat::varyNorm1, this);
+		thread t1(&Mat::varyPCA1, this);
+		thread t2(&Mat::varyFLD1, this);
+		t.join();
+		t1.join();
+		t2.join();
+}
+
+		void
+Mat::varyCase2()
+{
+		thread t(&Mat::varyNorm2, this);
+		thread t1(&Mat::varyPCA2, this);
+		thread t2(&Mat::varyFLD2, this);
+		t.join();
+		t1.join();
+		t2.join();
+}
+		void
+Mat::varyCase3()
+{
+		thread t(&Mat::varyNorm3, this);
+		thread t1(&Mat::varyPCA3, this);
+		thread t2(&Mat::varyFLD3, this);
+		t.join();
+		t1.join();
+		t2.join();
+}
 		ostream& 
 operator<<(ostream &os, const Sample &s)
 {
