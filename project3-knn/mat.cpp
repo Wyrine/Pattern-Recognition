@@ -19,7 +19,6 @@ Mat::Mat(const char* tr, const char* te, const uint& _features,
 		setParams(mu, sig, nX, nXte);
 		PCA(); FLD();
 }
-
 void
 Mat::generateEvals(const Matrix & results, const double prior[], FILE* out) const
 {
@@ -36,7 +35,6 @@ Mat::generateEvals(const Matrix & results, const double prior[], FILE* out) cons
 				{
 						if( results(i, 0) ) fp++;
 						else fn++;
-
 				}
 		}
 		tp /= results.getRow();
@@ -50,7 +48,6 @@ Mat::generateEvals(const Matrix & results, const double prior[], FILE* out) cons
 		fprintf(out, "%lf,%lf,%lf,%lf,%lf,%lf,%lf,%lf,%lf,%lf\n", prior[0], prior[1],
 						tp, tn, fp, fn,accuracy, sens, spec, precision);
 }
-
 		void
 Mat::readFile(const char* fName, Matrix &_X)
 {
@@ -73,7 +70,6 @@ Mat::readFile(const char* fName, Matrix &_X)
 		input.close();
 		buildMatrix(d, _X);
 }
-
 		bool
 Mat::getSamp(ifstream &input, double samp[])
 {
@@ -88,7 +84,6 @@ Mat::getSamp(ifstream &input, double samp[])
 
 		return true;
 }
-
 		void
 Mat::buildMatrix(vector<Sample> &c, Matrix & _X)
 {
@@ -98,7 +93,6 @@ Mat::buildMatrix(vector<Sample> &c, Matrix & _X)
 				for(int j = 0; j < features + 1; j++)
 						_X(i, j) = c[i][j];
 }
-
 		void
 Mat::PCA(float maxErr)
 {
@@ -109,7 +103,6 @@ Mat::PCA(float maxErr)
 		pXte = subMatrix(pXte, 0, 0, pXte.getRow() - 1, numDrop - 1);
 		setParams(pMu, pSig, pX, pXte);
 }
-
 		void
 Mat::addLabels(Matrix &dest, const Matrix & src)
 {
@@ -124,7 +117,6 @@ Mat::addLabels(Matrix &dest, const Matrix & src)
 		}
 		dest = tmp;
 }
-
 		void
 Mat::FLD()
 {
@@ -163,7 +155,6 @@ Mat::setParams(vector<Matrix> & Mean, vector<Matrix> & Cov, Matrix & _X, Matrix 
 				Cov.push_back( cov(m, m.getCol() ) );
 		}
 }
-
 		FILE*
 Mat::openFile(const char* fName)
 {
@@ -173,7 +164,6 @@ Mat::openFile(const char* fName)
 		if(out == NULL){ perror(tmp.c_str()); exit(1); }
 		return out;
 }
-
 		void
 Mat::writeHeader(const uint classes, FILE* out)
 {
@@ -181,7 +171,6 @@ Mat::writeHeader(const uint classes, FILE* out)
 				fprintf(out, "PriorClass%d,", i);
 		fprintf(out,"TP,TN,FP,FN,Accuracy,Sensitivity(Recall),Specificity,Precision\n");
 }
-
 		void
 Mat::runCase1(const double prior[])
 {
@@ -218,7 +207,6 @@ Mat::runCase1(const double prior[])
 
 		cout << "\n\n\n\n\n";
 }
-
 		void
 Mat::varyNorm1()
 {
@@ -241,7 +229,6 @@ Mat::varyNorm1()
 		}
 		fclose(out);
 }
-
 		void
 Mat::varyPCA1()
 {
@@ -262,7 +249,6 @@ Mat::varyPCA1()
 		}
 		fclose(out);
 }
-
 		void
 Mat::varyFLD1()
 {
@@ -313,7 +299,6 @@ Mat::runCase2(const double prior[])
 		generateEvals(rv, prior);
 		cout << "\n\n\n\n\n";
 }
-
 		void
 Mat::varyNorm2()
 {
@@ -334,8 +319,6 @@ Mat::varyNorm2()
 		}
 		fclose(out);
 }
-
-
 		void
 Mat::varyPCA2()
 {
@@ -457,7 +440,6 @@ Mat::varyFLD3()
 		}
 		fclose(out);
 }
-
 		Matrix &
 Mat::getProb(Matrix &testData, const double prior[], const vector<Matrix> & _sig,
 				const vector<Matrix>& _mean, Matrix & result)
@@ -495,7 +477,6 @@ Mat::varyAllCases()
 		t1.join();
 		t2.join();
 }
-
 		void
 Mat::varyCase1()
 {
@@ -506,7 +487,6 @@ Mat::varyCase1()
 		t1.join();
 		t2.join();
 }
-
 		void
 Mat::varyCase2()
 {
@@ -527,7 +507,6 @@ Mat::varyCase3()
 		t1.join();
 		t2.join();
 }
-
 		Matrix
 Identity(const uint n)
 {
@@ -536,7 +515,6 @@ Identity(const uint n)
 				ident(i,i) = 1;
 		return ident;
 }
-
 		ostream& 
 operator<<(ostream &os, const Sample &s)
 {
