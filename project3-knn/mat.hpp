@@ -13,7 +13,7 @@
 #include "Pr.h"
 
 
-#define STEP_SIZE 0.1
+#define STEP_SIZE 0.005
 #define PI_CONST 1.0 / pow(2*M_PI, (testData.getCol() - 1 )/2)
 #define STORAGE_PATH "./performance/"
 typedef unsigned int uint;
