@@ -47,10 +47,8 @@ Mat::generateEvals(const Matrix & results, const double prior[], FILE* out) cons
 		sens = tp / (tp + fn);
 		spec = tn / (tn + fp);
 		precision = tp / (tp + fp);
-		//		mtx.lock();
 		fprintf(out, "%lf,%lf,%lf,%lf,%lf,%lf,%lf,%lf,%lf,%lf\n", prior[0], prior[1],
 						tp, tn, fp, fn,accuracy, sens, spec, precision);
-		//		mtx.unlock();
 }
 
 		void
@@ -166,18 +164,31 @@ Mat::setParams(vector<Matrix> & Mean, vector<Matrix> & Cov, Matrix & _X, Matrix 
 		}
 }
 
+		FILE*
+Mat::openFile(const char* fName)
+{
+		string tmp = string(STORAGE_PATH) + string(fName);
+		FILE* out = fopen(tmp.c_str(), "w");
+
+		if(out == NULL){ perror(tmp.c_str()); exit(1); }
+		return out;
+}
+
+		void
+Mat::writeHeader(const uint classes, FILE* out)
+{
+		for(int i = 0; i < classes; i++)
+				fprintf(out, "PriorClass%d,", i);
+		fprintf(out,"TP,TN,FP,FN,Accuracy,Sensitivity(Recall),Specificity,Precision\n");
+}
 
 		void
 Mat::runCase1(const double prior[])
 {
 		cout << "Case 1 Scores:\n";
-		for(int i = 0; i < classes; i++)
-				fprintf(stdout, "PriorClass%d,", i);
-		fprintf(stdout,"TP,TN,FP,FN,Accuracy,Sensitivity(Recall),Specificity,Precision\n");
+		writeHeader(classes);
 		vector<Matrix> tmpSig;
-		Matrix identity(features, features);
-		for(int i = 0; i < features; i++)
-				identity(i, i) = 1;
+		Matrix identity = Identity(features);
 		for(int i = 0; i < classes; i++)
 				tmpSig.push_back( sqrt(sig[1](0, 0)) * identity );
 		Matrix rv(nXte.getRow(), 1);
@@ -187,9 +198,7 @@ Mat::runCase1(const double prior[])
 
 		tmpSig.clear();
 		rv.createMatrix(pXte.getRow(), 1);
-		identity.createMatrix(pXte.getCol() -1, pXte.getCol() -1 );
-		for(int i = 0; i < pXte.getCol() - 1; i++)
-				identity(i, i) = 1;
+		identity = Identity(pXte.getCol() -1);
 
 		for(int i = 0; i < classes; i++)
 				tmpSig.push_back( sqrt(pSig[1](0, 0) ) * identity );
@@ -200,8 +209,7 @@ Mat::runCase1(const double prior[])
 
 		tmpSig.clear();
 		rv.createMatrix(fXte.getRow(), 1);
-		identity.createMatrix(1, 1);
-		identity(0, 0) = 1;
+		identity = Identity(1);
 		for(int i = 0; i < classes; i++)
 				tmpSig.push_back( sqrt( mtod(fSig[1]) ) * identity );
 		getProb(fXte, prior, tmpSig, fMu, rv);
@@ -214,19 +222,16 @@ Mat::runCase1(const double prior[])
 		void
 Mat::varyNorm1()
 {
-		FILE* out = fopen("./performance/Case1_normalized.csv", "w");
-		if(out == NULL){ perror("./performance/Case1_normalized.csv"); exit(1); }
+		FILE* out = openFile("case1_normalized.csv");
 		double prior[2];
-		for(int i = 0; i < classes; i++)
-				fprintf(out, "PriorClass%d,", i);
-		fprintf(out,"TP,TN,FP,FN,Accuracy,Sensitivity(Recall),Specificity,Precision\n");
 		vector<Matrix> tmpSig;
-		Matrix identity(features, features);
-		for(int i = 0; i < features; i++)
-				identity(i, i) = 1;
+		Matrix identity = Identity(features);
+
+		//assumptions with this classifier
 		for(int i = 0; i < classes; i++)
 				tmpSig.push_back( sqrt(sig[1](0, 0)) * identity );
 
+		writeHeader(classes, out);
 		for(prior[0] = STEP_SIZE; prior[0] <= 1.0 - STEP_SIZE; prior[0] += STEP_SIZE)
 		{
 				prior[1] = 1 - prior[0];
@@ -237,24 +242,17 @@ Mat::varyNorm1()
 		fclose(out);
 }
 
-
 		void
 Mat::varyPCA1()
 {
-		FILE* out = fopen("./performance/Case1_PCA.csv", "w");
-		if(out == NULL){ perror("./performance/Case1_PCA.csv"); exit(1); }
+		FILE* out = openFile("case1_PCA.csv");
 		double prior[2];
-		for(int i = 0; i < classes; i++)
-				fprintf(out, "PriorClass%d,", i);
-		fprintf(out,"TP,TN,FP,FN,Accuracy,Sensitivity(Recall),Specificity,Precision\n");
 		vector<Matrix> tmpSig;
-		Matrix identity(pXte.getCol() -1, pXte.getCol() -1 );
-		Matrix rv(pXte.getRow(), 1);
-		for(int i = 0; i < pXte.getCol() - 1; i++)
-				identity(i, i) = 1;
+		Matrix identity = Identity(pXte.getCol() -1);
 		for(int i = 0; i < classes; i++)
 				tmpSig.push_back( sqrt(pSig[1](0, 0) ) * identity );
 
+		writeHeader(classes, out);
 		for(prior[0] = STEP_SIZE; prior[0] <= 1.0 - STEP_SIZE; prior[0] += STEP_SIZE)
 		{
 				prior[1] = 1 - prior[0];
@@ -268,18 +266,14 @@ Mat::varyPCA1()
 		void
 Mat::varyFLD1()
 {
-		FILE* out = fopen("./performance/Case1_FLD.csv", "w");
-		if(out == NULL){ perror("./performance/Case1_FLD.csv"); exit(1); }
+		FILE* out = openFile("case1_FLD.csv");
 		double prior[2];
-		for(int i = 0; i < classes; i++)
-				fprintf(out, "PriorClass%d,", i);
-		fprintf(out,"TP,TN,FP,FN,Accuracy,Sensitivity(Recall),Specificity,Precision\n");
 		vector<Matrix> tmpSig;
-		Matrix identity(1, 1);
-		identity(0, 0) = 1;
+		Matrix identity = Identity(1);
 		for(int i = 0; i < classes; i++)
 				tmpSig.push_back( sqrt( mtod(fSig[0]) ) * identity );
 
+		writeHeader(classes, out);
 		for(prior[0] = STEP_SIZE; prior[0] <= 1.0 - STEP_SIZE; prior[0] += STEP_SIZE)
 		{
 				prior[1] = 1 - prior[0];
@@ -289,14 +283,11 @@ Mat::varyFLD1()
 		}
 		fclose(out);
 }
-
 		void
 Mat::runCase2(const double prior[])
 {
 		cout << "Case 2 Scores:\n";
-		for(int i = 0; i < classes; i++)
-				fprintf(stdout, "PriorClass%d,", i);
-		fprintf(stdout,"TP,TN,FP,FN,Accuracy,Sensitivity(Recall),Specificity,Precision\n");
+		writeHeader(classes);
 		vector<Matrix> tmpSig;
 		for(int i = 0; i < classes; i++)
 				tmpSig.push_back(sig[0]);
@@ -326,17 +317,14 @@ Mat::runCase2(const double prior[])
 		void
 Mat::varyNorm2()
 {
-		FILE* out = fopen("./performance/Case2_Normalized.csv", "w");
-		if(out == NULL){ perror("./performance/Case2_Normalized.csv"); exit(1); }
-
-		for(int i = 0; i < classes; i++) fprintf(out, "PriorClass%d,", i);
-		fprintf(out,"TP,TN,FP,FN,Accuracy,Sensitivity(Recall),Specificity,Precision\n");
-		
+		FILE* out = openFile("case2_normalized.csv");
 		double prior[2];
 		vector<Matrix> tmpSig;
+
 		for(int i = 0; i < classes; i++)
 				tmpSig.push_back(sig[0]);
 
+		writeHeader(classes, out);
 		for(prior[0] = STEP_SIZE; prior[0] <= 1.0 - STEP_SIZE; prior[0] += STEP_SIZE)
 		{
 				prior[1] = 1 - prior[0];
@@ -351,17 +339,14 @@ Mat::varyNorm2()
 		void
 Mat::varyPCA2()
 {
-		FILE* out = fopen("./performance/Case2_PCA.csv", "w");
-		if(out == NULL){ perror("./performance/Case2_PCA.csv"); exit(1); }
-
-		for(int i = 0; i < classes; i++) fprintf(out, "PriorClass%d,", i);
-		fprintf(out,"TP,TN,FP,FN,Accuracy,Sensitivity(Recall),Specificity,Precision\n");
-		
+		FILE* out = openFile("case2_PCA.csv");
 		double prior[2];
 		vector<Matrix> tmpSig;
+
 		for(int i = 0; i < classes; i++)
 				tmpSig.push_back(pSig[0]);
 
+		writeHeader(classes, out);
 		for(prior[0] = STEP_SIZE; prior[0] <= 1.0 - STEP_SIZE; prior[0] += STEP_SIZE)
 		{
 				prior[1] = 1 - prior[0];
@@ -375,17 +360,14 @@ Mat::varyPCA2()
 		void
 Mat::varyFLD2()
 {
-		FILE* out = fopen("./performance/Case2_FLD.csv", "w");
-		if(out == NULL){ perror("./performance/Case2_FLD.csv"); exit(1); }
-
-		for(int i = 0; i < classes; i++) fprintf(out, "PriorClass%d,", i);
-		fprintf(out,"TP,TN,FP,FN,Accuracy,Sensitivity(Recall),Specificity,Precision\n");
-		
+		FILE* out = openFile("case2_FLD.csv");
 		double prior[2];
 		vector<Matrix> tmpSig;
+
 		for(int i = 0; i < classes; i++)
 				tmpSig.push_back(fSig[0]);
 
+		writeHeader(classes, out);
 		for(prior[0] = STEP_SIZE; prior[0] <= 1.0 - STEP_SIZE; prior[0] += STEP_SIZE)
 		{
 				prior[1] = 1 - prior[0];
@@ -400,9 +382,7 @@ Mat::varyFLD2()
 Mat::runCase3(const double prior[])
 {
 		cout << "Case 3 Scores:\n";
-		for(int i = 0; i < classes; i++)
-				fprintf(stdout, "PriorClass%d,", i);
-		fprintf(stdout,"TP,TN,FP,FN,Accuracy,Sensitivity(Recall),Specificity,Precision\n");
+		writeHeader(classes);
 		Matrix rv(nXte.getRow(), 1);
 		getProb(nXte, prior, sig, mu, rv);
 		cout << "Normalized X: \n";
@@ -423,17 +403,13 @@ Mat::runCase3(const double prior[])
 		void
 Mat::varyNorm3()
 {
-		FILE* out = fopen("./performance/Case3_Normalized.csv", "w");
-		if(out == NULL){ perror("./performance/Case3_Normalized.csv"); exit(1); }
-
-		for(int i = 0; i < classes; i++) fprintf(out, "PriorClass%d,", i);
-		fprintf(out,"TP,TN,FP,FN,Accuracy,Sensitivity(Recall),Specificity,Precision\n");
-		
+		FILE* out = openFile("case3_normalized.csv");
 		double prior[2];
 		vector<Matrix> tmpSig;
 		for(int i = 0; i < classes; i++)
 				tmpSig.push_back(sig[i]);
 
+		writeHeader(classes, out);
 		for(prior[0] = STEP_SIZE; prior[0] <= 1.0 - STEP_SIZE; prior[0] += STEP_SIZE)
 		{
 				prior[1] = 1 - prior[0];
@@ -446,17 +422,13 @@ Mat::varyNorm3()
 		void
 Mat::varyPCA3()
 {
-		FILE* out = fopen("./performance/Case3_PCA.csv", "w");
-		if(out == NULL){ perror("./performance/Case3_PCA.csv"); exit(1); }
-
-		for(int i = 0; i < classes; i++) fprintf(out, "PriorClass%d,", i);
-		fprintf(out,"TP,TN,FP,FN,Accuracy,Sensitivity(Recall),Specificity,Precision\n");
-		
+		FILE* out = openFile("case3_PCA.csv");
 		double prior[2];
 		vector<Matrix> tmpSig;
 		for(int i = 0; i < classes; i++)
 				tmpSig.push_back(pSig[i]);
 
+		writeHeader(classes, out);
 		for(prior[0] = STEP_SIZE; prior[0] <= 1.0 - STEP_SIZE; prior[0] += STEP_SIZE)
 		{
 				prior[1] = 1 - prior[0];
@@ -469,17 +441,13 @@ Mat::varyPCA3()
 		void
 Mat::varyFLD3()
 {
-		FILE* out = fopen("./performance/Case3_FLD.csv", "w");
-		if(out == NULL){ perror("./performance/Case3_FLD.csv"); exit(1); }
-
-		for(int i = 0; i < classes; i++) fprintf(out, "PriorClass%d,", i);
-		fprintf(out,"TP,TN,FP,FN,Accuracy,Sensitivity(Recall),Specificity,Precision\n");
-		
+		FILE* out = openFile("case3_FLD.csv");
 		double prior[2];
 		vector<Matrix> tmpSig;
 		for(int i = 0; i < classes; i++)
 				tmpSig.push_back(fSig[i]);
 
+		writeHeader(classes, out);
 		for(prior[0] = STEP_SIZE; prior[0] <= 1.0 - STEP_SIZE; prior[0] += STEP_SIZE)
 		{
 				prior[1] = 1 - prior[0];
@@ -559,6 +527,16 @@ Mat::varyCase3()
 		t1.join();
 		t2.join();
 }
+
+		Matrix
+Identity(const uint n)
+{
+		Matrix ident(n,n);
+		for(uint i = 0; i < n; i++)
+				ident(i,i) = 1;
+		return ident;
+}
+
 		ostream& 
 operator<<(ostream &os, const Sample &s)
 {

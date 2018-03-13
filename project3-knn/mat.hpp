@@ -16,11 +16,12 @@
 
 #define STEP_SIZE 0.1
 #define PI_CONST 1.0 / pow(2*M_PI, (testData.getCol() - 1 )/2)
+#define STORAGE_PATH "./performance/"
 typedef unsigned int uint;
-static mutex mtx;
 
 int normalize(Matrix &, Matrix &, const int, const int);
 int pca(Matrix &, Matrix &, const int, const float, const int);
+Matrix Identity(const uint);
 
 struct Sample
 {
@@ -50,6 +51,8 @@ protected:
     Matrix & getProb(Matrix&, const double [], const vector<Matrix> &,
                         const vector<Matrix> &, Matrix&);
     void generateEvals(const Matrix &, const double[], FILE* out = stdout) const;
+		static FILE* openFile(const char*);
+		static void writeHeader(const uint, FILE* out = stdout);
 		void varyNorm1();
 		void varyPCA1();
 		void varyFLD1();
