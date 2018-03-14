@@ -3,33 +3,33 @@
 
 using namespace std;
 
-double
+		double
 compareFunc(const string &curStr)
 {
-    return (curStr == "No") ? 0 : 1;
+		return (curStr == "No") ? 0 : 1;
 }
 
-int
+		int
 main(int argc, char** argv)
 {
-    if(argc < 5)
-    {
-        cerr << "Usage: ./driver trainFile testFile numFeatures numClasses\n";
-        return(1);
-    }
-    Mat mat(argv[1], argv[2], atoi(argv[3]), atoi(argv[4]), compareFunc);
-    double prior[atoi(argv[4])]; 
-    prior[0] = mat.getProb0();
-    prior[1] = mat.getProb1();
+		if(argc < 5)
+		{
+				cerr << "Usage: ./driver trainFile testFile numFeatures numClasses\n";
+				return(1);
+		}
+		Mat mat(argv[1], argv[2], atoi(argv[3]), atoi(argv[4]), compareFunc);
+		double prior[atoi(argv[4])]; 
+		prior[0] = mat.getProb0();
+		prior[1] = mat.getProb1();
 
-    cout << "Prior from data set: \n\n";
-    mat.runCase1(prior);
-    mat.runCase2(prior);
-    mat.runCase3(prior);
+		cout << "Prior from data set: \n\n";
+		mat.runCase1(prior);
+		mat.runCase2(prior);
+		mat.runCase3(prior);
 
 		cout << "Varying Prior probailities and writing to files\n"; 
 		mat.varyAllCases();
 		cout << "Done\n"; 
 
-    return 0;
+		return 0;
 }
