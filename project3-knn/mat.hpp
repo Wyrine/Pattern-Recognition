@@ -55,6 +55,8 @@ class Mat
 				double Minkowski(const Matrix &, const Matrix &, const uint dist = 2) const;
 				static void generateEvals(const Matrix &, const double[], FILE* = stdout);
 				static FILE* openFile(const char*);
+				static Matrix cropMatrix(const Matrix &, const uint, const uint,
+								const uint, const uint);
 				static void writeHeader(const uint, FILE* = stdout);
 				void varyNorm1();
 				void varyPCA1();

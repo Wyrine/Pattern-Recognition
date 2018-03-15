@@ -545,12 +545,47 @@ Mat::runkNN(const uint k, const uint dist, const uint transType)
 		}
 		//now should call generateEvals but need to overload it
 }
+		Matrix
+Mat::cropMatrix(const Matrix& m, const uint sR, const uint eR,
+				const uint sC, const uint eC)
+{
+		Matrix rv(eR-sR, eC-sC);
+		for(int i = sR; i < eR; i++)
+				for(int j = sC; j < eC; j++)
+						rv(i-sR, j-sC) = m(i, j);
+		return rv;
+}
 Matrix
 Mat::kNN(const Matrix &_te, const Matrix &_tr, const uint k, const uint dist) const
 {
-		Matrix rv(_te.getRow(), 1), neighbors(k, 1);
-		for(int i = 0; i < k; i++)
-				neighbors(i, 0) = INF;
+		Matrix rv(_te.getRow(), 1), neighbors(k, 2), curTe, curTr;
+		for(int i = 0; i < _te.getRow(); i++)	
+		{
+				for(int i = 0; i < k; i++)
+				{
+						neighbors(i, 0) = INF;
+						neighbors(i, 1) = -1;
+				}
+				curTe = cropMatrix(_te, i, i+1, 0, _te.getCol()-1); 
+				for(int j = 0; j < _tr.getRow(); j++)
+				{
+						curTr = cropMatrix(_tr, j, j+1, 0, _tr.getCol()-1); 
+						double curDist = Minkowski(curTe, curTr, dist);
+						for(int t = 0; t < k; t++)
+						{
+								if( neighbors(t, 0) > curDist )
+								{
+										neighbors(t, 0) = curDist;
+										neighbors(t, 1) = _tr(j, _tr.getCol()-1);
+										//need to sort neighbors here
+
+										break;
+								}
+						}
+						//classifying the class with most neighbors
+						rv(i, 0) = (getType(neighbors, 0).getRow() > getType(neighbors, 1).getRow()) ? 0 : 1;
+				}
+		}
 		return rv;
 }
 double
