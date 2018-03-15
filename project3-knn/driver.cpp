@@ -19,8 +19,8 @@ main(int argc, char** argv)
 		}
 		Mat mat(argv[1], argv[2], atoi(argv[3]), atoi(argv[4]), compareFunc);
 		double prior[atoi(argv[4])]; 
-		prior[0] = mat.getProb0();
-		prior[1] = mat.getProb1();
+		prior[0] = mat.prior0();
+		prior[1] = mat.prior1();
 
 		cout << "Prior from data set: \n\n";
 		mat.runCase1(prior);

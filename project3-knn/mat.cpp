@@ -181,7 +181,7 @@ Mat::runCase1(const double prior[])
 		for(int i = 0; i < classes; i++)
 				tmpSig.push_back( sqrt(sig[1](0, 0)) * identity );
 		Matrix rv(nXte.getRow(), 1);
-		getProb(nXte, prior, tmpSig, mu, rv);
+		MPP(nXte, prior, tmpSig, mu, rv);
 		cout << "Normalized X: \n";
 		generateEvals(rv, prior);
 
@@ -191,7 +191,7 @@ Mat::runCase1(const double prior[])
 
 		for(int i = 0; i < classes; i++)
 				tmpSig.push_back( sqrt(pSig[1](0, 0) ) * identity );
-		getProb(pXte, prior, tmpSig, pMu, rv);
+		MPP(pXte, prior, tmpSig, pMu, rv);
 		cout << "PCA: \n";
 		generateEvals(rv, prior);
 
@@ -201,7 +201,7 @@ Mat::runCase1(const double prior[])
 		identity = Identity(1);
 		for(int i = 0; i < classes; i++)
 				tmpSig.push_back( sqrt( mtod(fSig[1]) ) * identity );
-		getProb(fXte, prior, tmpSig, fMu, rv);
+		MPP(fXte, prior, tmpSig, fMu, rv);
 		cout << "FLD: \n";
 		generateEvals(rv, prior);
 
@@ -224,7 +224,7 @@ Mat::varyNorm1()
 		{
 				prior[1] = 1 - prior[0];
 				Matrix rv(nXte.getRow(), 1);
-				getProb(nXte, prior, tmpSig, mu, rv);
+				MPP(nXte, prior, tmpSig, mu, rv);
 				generateEvals(rv, prior, out);
 		}
 		fclose(out);
@@ -244,7 +244,7 @@ Mat::varyPCA1()
 		{
 				prior[1] = 1 - prior[0];
 				Matrix rv(pXte.getRow(), 1);
-				getProb(pXte, prior, tmpSig, pMu, rv);
+				MPP(pXte, prior, tmpSig, pMu, rv);
 				generateEvals(rv, prior, out);
 		}
 		fclose(out);
@@ -264,7 +264,7 @@ Mat::varyFLD1()
 		{
 				prior[1] = 1 - prior[0];
 				Matrix rv(fXte.getRow(), 1);
-				getProb(fXte, prior, tmpSig, fMu, rv);
+				MPP(fXte, prior, tmpSig, fMu, rv);
 				generateEvals(rv, prior, out);
 		}
 		fclose(out);
@@ -278,7 +278,7 @@ Mat::runCase2(const double prior[])
 		for(int i = 0; i < classes; i++)
 				tmpSig.push_back(sig[0]);
 		Matrix rv(nXte.getRow(), 1);
-		getProb(nXte, prior, tmpSig, mu, rv);
+		MPP(nXte, prior, tmpSig, mu, rv);
 		cout << "Normalized X: \n";
 		generateEvals(rv, prior); 
 		tmpSig.clear();
@@ -286,7 +286,7 @@ Mat::runCase2(const double prior[])
 
 		for(int i = 0; i < classes; i++)
 				tmpSig.push_back(pSig[0]);
-		getProb(pXte, prior, tmpSig, pMu, rv);
+		MPP(pXte, prior, tmpSig, pMu, rv);
 		cout << "PCA: \n";
 		generateEvals(rv, prior);
 
@@ -294,7 +294,7 @@ Mat::runCase2(const double prior[])
 		rv.createMatrix(fXte.getRow(), 1);
 		for(int i = 0; i < classes; i++)
 				tmpSig.push_back( fSig[0] );
-		getProb(fXte, prior, tmpSig, fMu, rv);
+		MPP(fXte, prior, tmpSig, fMu, rv);
 		cout << "FLD: \n";
 		generateEvals(rv, prior);
 		cout << "\n\n\n\n\n";
@@ -314,7 +314,7 @@ Mat::varyNorm2()
 		{
 				prior[1] = 1 - prior[0];
 				Matrix rv(nXte.getRow(), 1);
-				getProb(nXte, prior, tmpSig, mu, rv);
+				MPP(nXte, prior, tmpSig, mu, rv);
 				generateEvals(rv, prior, out);
 		}
 		fclose(out);
@@ -334,7 +334,7 @@ Mat::varyPCA2()
 		{
 				prior[1] = 1 - prior[0];
 				Matrix rv(pXte.getRow(), 1);
-				getProb(pXte, prior, tmpSig, pMu, rv);
+				MPP(pXte, prior, tmpSig, pMu, rv);
 				generateEvals(rv, prior, out);
 		}
 		fclose(out);
@@ -355,7 +355,7 @@ Mat::varyFLD2()
 		{
 				prior[1] = 1 - prior[0];
 				Matrix rv(fXte.getRow(), 1);
-				getProb(fXte, prior, tmpSig, fMu, rv);
+				MPP(fXte, prior, tmpSig, fMu, rv);
 				generateEvals(rv, prior, out);
 		}
 		fclose(out);
@@ -367,17 +367,17 @@ Mat::runCase3(const double prior[])
 		cout << "Case 3 Scores:\n";
 		writeHeader(classes);
 		Matrix rv(nXte.getRow(), 1);
-		getProb(nXte, prior, sig, mu, rv);
+		MPP(nXte, prior, sig, mu, rv);
 		cout << "Normalized X: \n";
 		generateEvals(rv, prior); 
 
 		rv.createMatrix(pXte.getRow(), 1);
-		getProb(pXte, prior, pSig, pMu, rv);
+		MPP(pXte, prior, pSig, pMu, rv);
 		cout << "PCA: \n";
 		generateEvals(rv, prior);
 
 		rv.createMatrix(fXte.getRow(), 1);
-		getProb(fXte, prior, fSig, fMu, rv);
+		MPP(fXte, prior, fSig, fMu, rv);
 		cout << "FLD: \n";
 		generateEvals(rv, prior);
 		cout << "\n\n\n\n\n";
@@ -397,7 +397,7 @@ Mat::varyNorm3()
 		{
 				prior[1] = 1 - prior[0];
 				Matrix rv(nXte.getRow(), 1);
-				getProb(nXte, prior, tmpSig, mu, rv);
+				MPP(nXte, prior, tmpSig, mu, rv);
 				generateEvals(rv, prior, out);
 		}
 		fclose(out);
@@ -416,7 +416,7 @@ Mat::varyPCA3()
 		{
 				prior[1] = 1 - prior[0];
 				Matrix rv(pXte.getRow(), 1);
-				getProb(pXte, prior, tmpSig, pMu, rv);
+				MPP(pXte, prior, tmpSig, pMu, rv);
 				generateEvals(rv, prior, out);
 		}
 		fclose(out);
@@ -435,13 +435,13 @@ Mat::varyFLD3()
 		{
 				prior[1] = 1 - prior[0];
 				Matrix rv(fXte.getRow(), 1);
-				getProb(fXte, prior, tmpSig, fMu, rv);
+				MPP(fXte, prior, tmpSig, fMu, rv);
 				generateEvals(rv, prior, out);
 		}
 		fclose(out);
 }
 		Matrix &
-Mat::getProb(Matrix &testData, const double prior[], const vector<Matrix> & _sig,
+Mat::MPP(Matrix &testData, const double prior[], const vector<Matrix> & _sig,
 				const vector<Matrix>& _mean, Matrix & result)
 {
 		int samples = testData.getRow(), choice;
@@ -522,4 +522,40 @@ operator<<(ostream &os, const Sample &s)
 				os << s.sample[i] << " ";
 		os << endl;
 		return os;
+}
+void
+Mat::runkNN(const uint k, const uint dist, const uint transType)
+{
+		Matrix temp;
+		switch(transType)
+		{
+				case 0:
+						temp = kNN(k, dist, nXte);
+						addLabels(temp, nXte);
+						break;
+				case 1:
+						temp = kNN(k, dist, pXte);
+						addLabels(temp, pXte);
+						break;
+				case 2:
+						temp = kNN(k, dist, fXte);
+						addLabels(temp, fXte);
+						break;
+		}
+}
+Matrix
+Mat::kNN(const uint k, const uint dist, const Matrix &_te) const
+{
+		Matrix rv(_te.getRow(), 1);
+				
+		
+
+		return rv;
+}
+double
+Mat::Minkowski(const Matrix & teSample, const Matrix & trSample, const uint dist) const
+{
+		double rv = 0.0;
+
+		return rv;
 }

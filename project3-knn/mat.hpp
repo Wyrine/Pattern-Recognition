@@ -47,8 +47,10 @@ class Mat
 				void readFile(const char*, Matrix &);
 				void addLabels(Matrix &, const Matrix &);
 				void setParams(vector<Matrix> &, vector<Matrix> &, Matrix &, Matrix &);
-				Matrix & getProb(Matrix&, const double [], const vector<Matrix> &,
+				Matrix & MPP(Matrix&, const double [], const vector<Matrix> &,
 								const vector<Matrix> &, Matrix&);
+				Matrix kNN(const uint, const uint, const Matrix &) const;
+				double Minkowski(const Matrix &, const Matrix &, const uint dist = 2) const;
 				void generateEvals(const Matrix &, const double[], FILE* = stdout) const;
 				static FILE* openFile(const char*);
 				static void writeHeader(const uint, FILE* = stdout);
@@ -62,11 +64,10 @@ class Mat
 				void varyPCA3();
 				void varyFLD3();
 		public:
-				double getProb0() { return ((double) getType(X, 0).getRow() ) / X.getRow(); }
-				double getProb1() { return ((double) getType(X, 1).getRow() ) / X.getRow(); }
+				double prior0() { return ((double) getType(X, 0).getRow() ) / X.getRow(); }
+				double prior1() { return ((double) getType(X, 1).getRow() ) / X.getRow(); }
 				Mat(const char*, const char*, const uint&, const uint&, 
 								double (*_compFunc)(const string &));
-
 				void varyCase1();
 				void varyCase2();
 				void varyCase3();
@@ -74,6 +75,7 @@ class Mat
 				void runCase1(const double []);
 				void runCase2(const double []);
 				void runCase3(const double []);
+				void runkNN(const uint = 3, const uint = 2, const uint = 0);
 				void PCA(float maxErr = 0.1);
 				void FLD();
 				void varyProb(const int);
