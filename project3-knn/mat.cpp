@@ -19,8 +19,9 @@ Mat::Mat(const char* tr, const char* te, const uint& _features,
 		setParams(mu, sig, nX, nXte);
 		PCA(); FLD();
 }
-void
-Mat::generateEvals(const Matrix & results, const double prior[], FILE* out) const
+//need to generalize this function to work for other classifiers such as kNN
+		void
+Mat::generateEvals(const Matrix & results, const double prior[], FILE* out)
 {
 		double accuracy, precision, sens, spec, tp=0, tn=0, fp=0, fn=0;
 
@@ -523,33 +524,33 @@ operator<<(ostream &os, const Sample &s)
 		os << endl;
 		return os;
 }
-void
+		void
 Mat::runkNN(const uint k, const uint dist, const uint transType)
 {
 		Matrix temp;
 		switch(transType)
 		{
 				case 0:
-						temp = kNN(k, dist, nXte);
+						temp = kNN(nXte, nX, k, dist);
 						addLabels(temp, nXte);
 						break;
 				case 1:
-						temp = kNN(k, dist, pXte);
+						temp = kNN(pXte, pX, k, dist);
 						addLabels(temp, pXte);
 						break;
 				case 2:
-						temp = kNN(k, dist, fXte);
+						temp = kNN(fXte, fX, k, dist);
 						addLabels(temp, fXte);
 						break;
 		}
+		//now should call generateEvals but need to overload it
 }
 Matrix
-Mat::kNN(const uint k, const uint dist, const Matrix &_te) const
+Mat::kNN(const Matrix &_te, const Matrix &_tr, const uint k, const uint dist) const
 {
-		Matrix rv(_te.getRow(), 1);
-				
-		
-
+		Matrix rv(_te.getRow(), 1), neighbors(k, 1);
+		for(int i = 0; i < k; i++)
+				neighbors(i, 0) = INF;
 		return rv;
 }
 double

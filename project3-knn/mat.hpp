@@ -6,6 +6,7 @@
 #include <cstdlib>
 #include <string>
 #include <cmath>
+#include <limits>
 #include <fstream>
 #include <thread>
 #include <vector>
@@ -14,6 +15,7 @@
 
 
 #define STEP_SIZE 0.05
+#define INF numeric_limits<double>::max()
 #define PI_CONST 1.0 / pow(2*M_PI, (testData.getCol() - 1 )/2)
 #define STORAGE_PATH "./performance/"
 typedef unsigned int uint;
@@ -49,9 +51,9 @@ class Mat
 				void setParams(vector<Matrix> &, vector<Matrix> &, Matrix &, Matrix &);
 				Matrix & MPP(Matrix&, const double [], const vector<Matrix> &,
 								const vector<Matrix> &, Matrix&);
-				Matrix kNN(const uint, const uint, const Matrix &) const;
+				Matrix kNN(const Matrix &, const Matrix &, const uint, const uint) const;
 				double Minkowski(const Matrix &, const Matrix &, const uint dist = 2) const;
-				void generateEvals(const Matrix &, const double[], FILE* = stdout) const;
+				static void generateEvals(const Matrix &, const double[], FILE* = stdout);
 				static FILE* openFile(const char*);
 				static void writeHeader(const uint, FILE* = stdout);
 				void varyNorm1();
