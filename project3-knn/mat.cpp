@@ -561,13 +561,16 @@ Mat::kNN(const Matrix &_te, const Matrix &_tr, const uint k, const uint dist) co
 		Matrix rv(_te.getRow(), 1), neighbors(k, 2), curTe, curTr;
 		for(int i = 0; i < _te.getRow(); i++)	
 		{
-				for(int i = 0; i < k; i++)
-				{
-						neighbors(i, 0) = INF;
-						neighbors(i, 1) = -1;
-				}
 				curTe = cropMatrix(_te, i, i+1, 0, _te.getCol()-1); 
-				for(int j = 0; j < _tr.getRow(); j++)
+				//initialize the k neighbors to the first k distances from the training set
+				for(int j = 0; j < k; j++)
+				{
+						neighbors(j, 0) = Minkowski(curTe, 
+										cropMatrix(_tr, j, j+1, 0, _tr.getCol()-1), dist);
+						neighbors(j, 1) = _tr(j, _tr.getCol()-1);
+				}
+				//and loop through the rest of the training set
+				for(int j = k; j < _tr.getRow(); j++)
 				{
 						curTr = cropMatrix(_tr, j, j+1, 0, _tr.getCol()-1); 
 						double curDist = Minkowski(curTe, curTr, dist);
@@ -577,14 +580,13 @@ Mat::kNN(const Matrix &_te, const Matrix &_tr, const uint k, const uint dist) co
 								{
 										neighbors(t, 0) = curDist;
 										neighbors(t, 1) = _tr(j, _tr.getCol()-1);
-										//need to sort neighbors here
-
 										break;
 								}
 						}
-						//classifying the class with most neighbors
-						rv(i, 0) = (getType(neighbors, 0).getRow() > getType(neighbors, 1).getRow()) ? 0 : 1;
 				}
+				//classifying the class with most neighbors
+				rv(i, 0) = (getType(neighbors, 0).getRow() > 
+								getType(neighbors, 1).getRow()) ? 0 : 1;
 		}
 		return rv;
 }
@@ -592,6 +594,7 @@ double
 Mat::Minkowski(const Matrix & teSample, const Matrix & trSample, const uint dist) const
 {
 		double rv = 0.0;
-
-		return rv;
+		for(int i=0; i< teSample.getCol(); i++)
+				rv += pow(abs(teSample(0, i) - trSample(0, i)), dist);
+		return pow(rv, 1.0/dist);
 }
