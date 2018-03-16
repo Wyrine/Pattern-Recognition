@@ -559,26 +559,10 @@ Mat::varykNN(const uint transType, const uint dist)
 						out = openFile("kNN_FLD.csv");
 						break;
 		}
-		for(int k = 1; k <= sqrt(X.getRow()); k+= 2)
+		writeHeader(classes, out, 1);
+		for(int k = 1; k <= 49/*sqrt(X.getRow())*/; k+= 2)
 				runkNN(transType, k, dist, out);
 		fclose(out);
-}
-
-		Matrix
-Identity(const uint n)
-{
-		Matrix ident(n,n);
-		for(uint i = 0; i < n; i++)
-				ident(i,i) = 1;
-		return ident;
-}
-		ostream& 
-operator<<(ostream &os, const Sample &s)
-{
-		for(int i = 0; i < s.sample.size(); i++)
-				os << s.sample[i] << " ";
-		os << endl;
-		return os;
 }
 		void
 Mat::runkNN(const uint transType, const uint k, const uint dist, FILE* out)
@@ -599,10 +583,13 @@ Mat::runkNN(const uint transType, const uint k, const uint dist, FILE* out)
 						addLabels(temp, fXte);
 						break;
 		}
-		if(out == stdout) printf("kNN scores:\n");
-		writeHeader(classes, out, 1);
+		if(out == stdout || out == stderr) 
+		{
+				printf("kNN scores:\n");
+				writeHeader(classes, out, 1);
+		}
 		generateEvals(temp, nullptr, out, 1, k);
-		if(out == stdout) printf("\n\n\n\n\n\n");
+		if(out == stdout || out == stderr) printf("\n\n\n\n\n\n");
 }
 		Matrix
 Mat::cropMatrix(const Matrix& m, const uint sR, const uint eR,
@@ -633,14 +620,16 @@ Mat::kNN(const Matrix &_te, const Matrix &_tr, const uint k, const uint dist) co
 				{
 						curTr = cropMatrix(_tr, j, j+1, 0, _tr.getCol()-1); 
 						double curDist = Minkowski(curTe, curTr, dist);
-						for(int t = 0; t < k; t++)
+						int max_dist_index = 0;
+						for(int t = 1; t < k; t++)
+								if( neighbors(t, 0) > neighbors(max_dist_index, 0) )
+										max_dist_index = t;
+						//replace the maximum distance if it is longer than
+						//the current distance
+						if( neighbors(max_dist_index, 0) > curDist )
 						{
-								if( neighbors(t, 0) > curDist )
-								{
-										neighbors(t, 0) = curDist;
-										neighbors(t, 1) = _tr(j, _tr.getCol()-1);
-										break;
-								}
+								neighbors(max_dist_index, 0) = curDist;
+								neighbors(max_dist_index, 1) = _tr(j, _tr.getCol()-1);
 						}
 				}
 				//classifying the class with most neighbors
@@ -656,4 +645,20 @@ Mat::Minkowski(const Matrix & teSample, const Matrix & trSample, const uint dist
 		for(int i=0; i< teSample.getCol(); i++)
 				rv += pow(abs(teSample(0, i) - trSample(0, i)), dist);
 		return pow(rv, 1.0/dist);
+}
+		Matrix
+Identity(const uint n)
+{
+		Matrix ident(n,n);
+		for(uint i = 0; i < n; i++)
+				ident(i,i) = 1;
+		return ident;
+}
+		ostream& 
+operator<<(ostream &os, const Sample &s)
+{
+		for(int i = 0; i < s.sample.size(); i++)
+				os << s.sample[i] << " ";
+		os << endl;
+		return os;
 }
