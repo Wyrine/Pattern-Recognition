@@ -26,6 +26,8 @@ main(int argc, char** argv)
 		mat.runCase2(prior);
 		mat.runCase3(prior);
 		mat.runkNN(0, 3, 2);
+		mat.runkNN(1, 3, 2);
+		mat.runkNN(2, 3, 2);
 
 		cout << "Varying Prior probailities, k-values, and writing to files\n"; 
 		mat.varyAllCases();

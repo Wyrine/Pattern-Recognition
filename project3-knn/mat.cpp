@@ -6,7 +6,6 @@ using namespace std;
 Mat::Mat(const char* tr, const char* te, const uint& _features, 
 				const uint& _classes, double (*_compFunc)(const string &))
 {
-
 		classes = _classes;
 		features = _features;
 		compFunc = _compFunc;
@@ -545,7 +544,6 @@ Mat::varyAllkNN(const uint dist)
 		void
 Mat::varykNN(const uint transType, const uint dist)
 {
-
 		FILE* out;
 		switch(transType)
 		{
@@ -560,7 +558,7 @@ Mat::varykNN(const uint transType, const uint dist)
 						break;
 		}
 		writeHeader(classes, out, 1);
-		for(int k = 1; k <= 49/*sqrt(X.getRow())*/; k+= 2)
+		for(int k = 1; k <= sqrt(X.getRow()); k+= 2)
 				runkNN(transType, k, dist, out);
 		fclose(out);
 }
@@ -601,12 +599,13 @@ Mat::cropMatrix(const Matrix& m, const uint sR, const uint eR,
 						rv(i-sR, j-sC) = m(i, j);
 		return rv;
 }
-Matrix
+		Matrix
 Mat::kNN(const Matrix &_te, const Matrix &_tr, const uint k, const uint dist) const
 {
 		Matrix rv(_te.getRow(), 1), neighbors(k, 2), curTe, curTr;
 		for(int i = 0; i < _te.getRow(); i++)	
 		{
+				//the body of this loop can be done in parallel
 				curTe = cropMatrix(_te, i, i+1, 0, _te.getCol()-1); 
 				//initialize the k neighbors to the first k distances from the training set
 				for(int j = 0; j < k; j++)
@@ -638,7 +637,7 @@ Mat::kNN(const Matrix &_te, const Matrix &_tr, const uint k, const uint dist) co
 		}
 		return rv;
 }
-double
+		double
 Mat::Minkowski(const Matrix & teSample, const Matrix & trSample, const uint dist) const
 {
 		double rv = 0.0;
