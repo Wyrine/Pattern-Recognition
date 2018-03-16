@@ -53,11 +53,12 @@ class Mat
 								const vector<Matrix> &, Matrix&);
 				Matrix kNN(const Matrix &, const Matrix &, const uint, const uint) const;
 				double Minkowski(const Matrix &, const Matrix &, const uint dist = 2) const;
-				static void generateEvals(const Matrix &, const double[], FILE* = stdout);
+				static void generateEvals(const Matrix &, const double[], FILE* = stdout, 
+								const uint = 0, const uint = 3);
 				static FILE* openFile(const char*);
 				static Matrix cropMatrix(const Matrix &, const uint, const uint,
 								const uint, const uint);
-				static void writeHeader(const uint, FILE* = stdout);
+				static void writeHeader(const uint, FILE* = stdout, const uint = 0);
 				void varyNorm1();
 				void varyPCA1();
 				void varyFLD1();
@@ -75,11 +76,13 @@ class Mat
 				void varyCase1();
 				void varyCase2();
 				void varyCase3();
+				void varykNN(const uint transType, const uint dist = 2);
+				void varyAllkNN(const uint dist = 2);
 				void varyAllCases();
 				void runCase1(const double []);
 				void runCase2(const double []);
 				void runCase3(const double []);
-				void runkNN(const uint = 3, const uint = 2, const uint = 0);
+				void runkNN(const uint = 0, const uint = 3, const uint = 2, FILE* = stdout);
 				void PCA(float maxErr = 0.1);
 				void FLD();
 				void varyProb(const int);

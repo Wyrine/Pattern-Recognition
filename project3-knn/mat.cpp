@@ -19,9 +19,10 @@ Mat::Mat(const char* tr, const char* te, const uint& _features,
 		setParams(mu, sig, nX, nXte);
 		PCA(); FLD();
 }
-//need to generalize this function to work for other classifiers such as kNN
+//if need to generalize it further, change prior to void& or void* 
 		void
-Mat::generateEvals(const Matrix & results, const double prior[], FILE* out)
+Mat::generateEvals(const Matrix & results, const double prior[], FILE* out, 
+				const uint flag, const uint k)
 {
 		double accuracy, precision, sens, spec, tp=0, tn=0, fp=0, fn=0;
 
@@ -46,8 +47,19 @@ Mat::generateEvals(const Matrix & results, const double prior[], FILE* out)
 		sens = tp / (tp + fn);
 		spec = tn / (tn + fp);
 		precision = tp / (tp + fp);
-		fprintf(out, "%lf,%lf,%lf,%lf,%lf,%lf,%lf,%lf,%lf,%lf\n", prior[0], prior[1],
-						tp, tn, fp, fn,accuracy, sens, spec, precision);
+		switch(flag)
+		{
+				case 0:
+						fprintf(out, "%lf,%lf", prior[0], prior[1]);
+						break;
+				case 1:
+						fprintf(out, "%d,", k);
+						break;
+				default:
+						break;
+		}
+		fprintf(out, "%lf,%lf,%lf,%lf,%lf,%lf,%lf,%lf\n", tp, tn, fp, fn,
+						accuracy, sens, spec, precision);
 }
 		void
 Mat::readFile(const char* fName, Matrix &_X)
@@ -166,10 +178,20 @@ Mat::openFile(const char* fName)
 		return out;
 }
 		void
-Mat::writeHeader(const uint classes, FILE* out)
+Mat::writeHeader(const uint classes, FILE* out, const uint flag)
 {
-		for(int i = 0; i < classes; i++)
-				fprintf(out, "PriorClass%d,", i);
+		switch(flag)
+		{
+				case 0:
+						for(int i = 0; i < classes; i++)
+								fprintf(out, "PriorClass%d,", i);
+						break;
+				case 1:
+						fprintf(out, "k,");
+						break;
+				default:
+						break;
+		}
 		fprintf(out,"TP,TN,FP,FN,Accuracy,Sensitivity(Recall),Specificity,Precision\n");
 }
 		void
@@ -474,9 +496,11 @@ Mat::varyAllCases()
 		thread t(&Mat::varyCase1, this);
 		thread t1(&Mat::varyCase2, this);
 		thread t2(&Mat::varyCase3, this);
+		thread t3(&Mat::varyAllkNN, this, 2);
 		t.join();
 		t1.join();
 		t2.join();
+		t3.join();
 }
 		void
 Mat::varyCase1()
@@ -508,6 +532,38 @@ Mat::varyCase3()
 		t1.join();
 		t2.join();
 }
+		void
+Mat::varyAllkNN(const uint dist)
+{
+		thread t1(&Mat::varykNN, this, 0, dist);
+		thread t2(&Mat::varykNN, this, 1, dist);
+		thread t3(&Mat::varykNN, this, 2, dist);
+		t1.join();
+		t2.join();
+		t3.join();
+}
+		void
+Mat::varykNN(const uint transType, const uint dist)
+{
+
+		FILE* out;
+		switch(transType)
+		{
+				case 0:
+						out = openFile("kNN_normalized.csv");
+						break;
+				case 1:
+						out = openFile("kNN_PCA.csv");
+						break;
+				case 2:
+						out = openFile("kNN_FLD.csv");
+						break;
+		}
+		for(int k = 1; k <= sqrt(X.getRow()); k+= 2)
+				runkNN(transType, k, dist, out);
+		fclose(out);
+}
+
 		Matrix
 Identity(const uint n)
 {
@@ -525,7 +581,7 @@ operator<<(ostream &os, const Sample &s)
 		return os;
 }
 		void
-Mat::runkNN(const uint k, const uint dist, const uint transType)
+Mat::runkNN(const uint transType, const uint k, const uint dist, FILE* out)
 {
 		Matrix temp;
 		switch(transType)
@@ -543,7 +599,10 @@ Mat::runkNN(const uint k, const uint dist, const uint transType)
 						addLabels(temp, fXte);
 						break;
 		}
-		//now should call generateEvals but need to overload it
+		if(out == stdout) printf("kNN scores:\n");
+		writeHeader(classes, out, 1);
+		generateEvals(temp, nullptr, out, 1, k);
+		if(out == stdout) printf("\n\n\n\n\n\n");
 }
 		Matrix
 Mat::cropMatrix(const Matrix& m, const uint sR, const uint eR,

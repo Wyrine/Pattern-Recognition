@@ -21,13 +21,13 @@ main(int argc, char** argv)
 		double prior[atoi(argv[4])]; 
 		prior[0] = mat.prior0();
 		prior[1] = mat.prior1();
-		mat.runkNN(3, 2, 0);
 		cout << "Prior from data set: \n\n";
 		mat.runCase1(prior);
 		mat.runCase2(prior);
 		mat.runCase3(prior);
+		mat.runkNN(0, 3, 2);
 
-		cout << "Varying Prior probailities and writing to files\n"; 
+		cout << "Varying Prior probailities, k-values, and writing to files\n"; 
 		mat.varyAllCases();
 		cout << "Done\n"; 
 
