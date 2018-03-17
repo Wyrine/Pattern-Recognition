@@ -41,7 +41,7 @@ class Mat
 				Matrix X, nX, Xte, nXte, pX, pXte, fX, fXte, fW;
 				vector<Matrix> mu, sig, pMu, pSig, fMu, fSig;
 
-				Mat(){ classes=features=0; compFunc = NULL; }
+				Mat(){ classes=features=0; compFunc = nullptr; }
 				double (*compFunc)(const string &);
 				bool getSamp(ifstream &, double []);
 				virtual void buildMatrix(vector<Sample> &, Matrix&);
@@ -83,5 +83,4 @@ class Mat
 				virtual void runkNN(const uint = 0, const uint = 3, const uint = 2, FILE* = stdout);
 				virtual void PCA(float maxErr = 0.1);
 				virtual void FLD();
-//				virtual void varyProb(const int);
 };
