@@ -18,10 +18,8 @@ Mat::Mat(const char* tr, const char* te, const uint& _features,
 		setParams(mu, sig, nX, nXte);
 		PCA(); FLD();
 }
-//if need to generalize it further, change prior to void& or void* 
 		void
-Mat::generateEvals(const Matrix & results, const double prior[], FILE* out, 
-				const uint flag, const uint k)
+Mat::generateEvals(const Matrix & results, const void* arg, FILE* out, const uint flag)
 {
 		double accuracy, precision, sens, spec, tp=0, tn=0, fp=0, fn=0;
 
@@ -49,10 +47,10 @@ Mat::generateEvals(const Matrix & results, const double prior[], FILE* out,
 		switch(flag)
 		{
 				case 0:
-						fprintf(out, "%lf,%lf", prior[0], prior[1]);
+						fprintf(out, "%lf,%lf", ((double*)arg)[0], ((double*)arg)[1]);
 						break;
 				case 1:
-						fprintf(out, "%d,", k);
+						fprintf(out, "%d,", *((int*)arg) );
 						break;
 				default:
 						break;
@@ -586,7 +584,7 @@ Mat::runkNN(const uint transType, const uint k, const uint dist, FILE* out)
 				printf("kNN scores:\n");
 				writeHeader(classes, out, 1);
 		}
-		generateEvals(temp, nullptr, out, 1, k);
+		generateEvals(temp, &k, out, 1);
 		if(out == stdout || out == stderr) printf("\n\n\n\n\n\n");
 }
 		Matrix
@@ -638,7 +636,7 @@ Mat::kNN(const Matrix &_te, const Matrix &_tr, const uint k, const uint dist) co
 		return rv;
 }
 		double
-Mat::Minkowski(const Matrix & teSample, const Matrix & trSample, const uint dist) const
+Mat::Minkowski(const Matrix & teSample, const Matrix & trSample, const uint dist)
 {
 		double rv = 0.0;
 		for(int i=0; i< teSample.getCol(); i++)

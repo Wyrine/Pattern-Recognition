@@ -6,7 +6,6 @@
 #include <cstdlib>
 #include <string>
 #include <cmath>
-#include <limits>
 #include <fstream>
 #include <thread>
 #include <vector>
@@ -15,7 +14,6 @@
 
 
 #define STEP_SIZE 0.1
-#define INF numeric_limits<double>::max()
 #define PI_CONST 1.0 / pow(2*M_PI, (testData.getCol() - 1 )/2)
 #define STORAGE_PATH "./performance/"
 typedef unsigned int uint;
@@ -43,47 +41,47 @@ class Mat
 				Matrix X, nX, Xte, nXte, pX, pXte, fX, fXte, fW;
 				vector<Matrix> mu, sig, pMu, pSig, fMu, fSig;
 
+				Mat(){ classes=features=0; compFunc = NULL; }
 				double (*compFunc)(const string &);
 				bool getSamp(ifstream &, double []);
-				void buildMatrix(vector<Sample> &, Matrix&);
-				void readFile(const char*, Matrix &);
+				virtual void buildMatrix(vector<Sample> &, Matrix&);
+				virtual void readFile(const char*, Matrix &);
 				void addLabels(Matrix &, const Matrix &);
 				void setParams(vector<Matrix> &, vector<Matrix> &, Matrix &, Matrix &);
 				Matrix & MPP(Matrix&, const double [], const vector<Matrix> &,
 								const vector<Matrix> &, Matrix&);
 				Matrix kNN(const Matrix &, const Matrix &, const uint, const uint) const;
-				double Minkowski(const Matrix &, const Matrix &, const uint dist = 2) const;
-				static void generateEvals(const Matrix &, const double[], FILE* = stdout, 
-								const uint = 0, const uint = 3);
+				static double Minkowski(const Matrix &, const Matrix &, const uint dist = 2);
+				static void generateEvals(const Matrix &, const void*, FILE* = stdout, const uint = 0);
 				static FILE* openFile(const char*);
 				static Matrix cropMatrix(const Matrix &, const uint, const uint,
 								const uint, const uint);
 				static void writeHeader(const uint, FILE* = stdout, const uint = 0);
-				void varyNorm1();
-				void varyPCA1();
-				void varyFLD1();
-				void varyNorm2();
-				void varyPCA2();
-				void varyFLD2();
-				void varyNorm3();
-				void varyPCA3();
-				void varyFLD3();
+				virtual void varyNorm1();
+				virtual void varyPCA1();
+				virtual void varyFLD1();
+				virtual void varyNorm2();
+				virtual void varyPCA2();
+				virtual void varyFLD2();
+				virtual void varyNorm3();
+				virtual void varyPCA3();
+				virtual void varyFLD3();
 		public:
-				double prior0() { return ((double) getType(X, 0).getRow() ) / X.getRow(); }
-				double prior1() { return ((double) getType(X, 1).getRow() ) / X.getRow(); }
+				virtual double prior0() { return ((double) getType(X, 0).getRow() ) / X.getRow(); }
+				virtual double prior1() { return ((double) getType(X, 1).getRow() ) / X.getRow(); }
 				Mat(const char*, const char*, const uint&, const uint&, 
 								double (*_compFunc)(const string &));
-				void varyCase1();
-				void varyCase2();
-				void varyCase3();
-				void varykNN(const uint transType, const uint dist = 2);
-				void varyAllkNN(const uint dist = 2);
-				void varyAllCases();
-				void runCase1(const double []);
-				void runCase2(const double []);
-				void runCase3(const double []);
-				void runkNN(const uint = 0, const uint = 3, const uint = 2, FILE* = stdout);
-				void PCA(float maxErr = 0.1);
-				void FLD();
-				void varyProb(const int);
+				virtual void varyCase1();
+				virtual void varyCase2();
+				virtual void varyCase3();
+				virtual void varykNN(const uint transType, const uint dist = 2);
+				virtual void varyAllkNN(const uint dist = 2);
+				virtual void varyAllCases();
+				virtual void runCase1(const double []);
+				virtual void runCase2(const double []);
+				virtual void runCase3(const double []);
+				virtual void runkNN(const uint = 0, const uint = 3, const uint = 2, FILE* = stdout);
+				virtual void PCA(float maxErr = 0.1);
+				virtual void FLD();
+//				virtual void varyProb(const int);
 };

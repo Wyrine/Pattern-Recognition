@@ -3,7 +3,7 @@ INCLUDES = ../Matrix/include
 CXXFLAGS = -O2 -g -Wall -I$(INCLUDES)
 LIBS = $(INCLUDES)/libmatrix.a 
 EXECUTABLES = driver
-HEADERS = mat.hpp
+HEADERS = mat.hpp validate.hpp
 RESULT = performance
 
 all: $(EXECUTABLES)
@@ -17,6 +17,6 @@ clean:
 .cpp.o:
 		$(CXX) $(CXXFLAGS) -c $*.cpp
 
-driver: mat.o driver.o $(HEADERS)
-		@$(CXX) -g -o driver mat.o driver.o $(LIBS)
+driver: validate.o mat.o driver.o $(HEADERS)
+		@$(CXX) -g -o driver mat.o validate.o driver.o $(LIBS)
 		@mkdir $(RESULT)
