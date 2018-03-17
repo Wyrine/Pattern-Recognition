@@ -2,18 +2,25 @@
 
 using namespace std;
 
-Validation::Validation()
-{
-}
-
 Validation::Validation(const char* data, const char* grp)
 {
 
 
 }
-
-void
+		void
 Validation::Validate(const uint m)
+{
+
+
+}
+		void
+Validation::readGroupingFile(const char*)
+{
+
+
+}
+		void
+Validation::readAndBuildMatrix(const char*)
 {
 
 
