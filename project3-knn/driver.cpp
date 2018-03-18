@@ -34,5 +34,6 @@ main(int argc, char** argv)
 		cout << "Done\n"; 
 */
 		Validation v("./data/fglass.dat", "./data/fglass.grp");
+		v.validate();
 		return 0;
 }
