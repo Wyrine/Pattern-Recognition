@@ -34,7 +34,22 @@ Validation::validate(const uint m)
 				nXte = cropMatrix(Xte, 0, Xte.getRow(), 0, Xte.getCol()-1);
 				nX = cropMatrix(X, 0, X.getRow(), 0, X.getCol()-1);
 				normalize(nX, nXte, features, 1);
+				addLabels(nX, X);
+				addLabels(nXte, Xte);
+				varykNN(i+1, 2);
 		}
+}
+		void
+Validation::varykNN(const uint valStep, const uint dist)
+{
+		FILE* out;
+		string fName = string("kNN_validation") + to_string(valStep) + string(".csv");
+		out = openFile(fName.c_str());
+		writeHeader(classes, out, 1);
+		
+		for(int k = 1; k < MAX_K_NEIGHBORS; k+=2)
+			runkNN(0, k, dist, out);
+		fclose(out);
 }
 		void
 Validation::readGroupingFile(const char* grp)

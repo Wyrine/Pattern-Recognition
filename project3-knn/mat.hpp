@@ -14,6 +14,7 @@
 
 
 #define STEP_SIZE 0.1
+#define MAX_K_NEIGHBORS sqrt(X.getRow())
 #define PI_CONST 1.0 / pow(2*M_PI, (testData.getCol() - 1 )/2)
 #define STORAGE_PATH "./performance/"
 typedef unsigned int uint;
@@ -51,6 +52,7 @@ class Mat
 				Matrix & MPP(Matrix&, const double [], const vector<Matrix> &,
 								const vector<Matrix> &, Matrix&);
 				Matrix kNN(const Matrix &, const Matrix &, const uint, const uint) const;
+				short neighborVoting(const Matrix &) const;
 				static double Minkowski(const Matrix &, const Matrix &, const uint dist = 2);
 				static void generateEvals(const Matrix &, const void*, FILE* = stdout, const uint = 0);
 				static FILE* openFile(const char*);
@@ -66,7 +68,6 @@ class Mat
 				virtual void varyNorm3();
 				virtual void varyPCA3();
 				virtual void varyFLD3();
-				short neighborVoting(const Matrix &) const;
 		public:
 				virtual double prior0() { return ((double) getType(X, 0).getRow() ) / X.getRow(); }
 				virtual double prior1() { return ((double) getType(X, 1).getRow() ) / X.getRow(); }

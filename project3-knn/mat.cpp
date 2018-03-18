@@ -559,7 +559,7 @@ Mat::varykNN(const uint transType, const uint dist)
 						break;
 		}
 		writeHeader(classes, out, 1);
-		for(int k = 1; k <= sqrt(X.getRow()); k+= 2)
+		for(int k = 1; k <= MAX_K_NEIGHBORS; k+= 2)
 				runkNN(transType, k, dist, out);
 		fclose(out);
 }

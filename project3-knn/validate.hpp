@@ -21,4 +21,5 @@ class Validation : public Mat
 				void validate(const uint = 10);
 				void readGroupingFile(const char*);
 				void readAndBuildMatrix(const char*);
+				void varykNN(const uint, const uint);
 };

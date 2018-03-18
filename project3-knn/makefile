@@ -13,10 +13,19 @@ clean:
 		@rm -f core $(EXECUTABLES) *.o *.txt
 		@rm -rf $(RESULT)
 
-.SUFFIXES: .cpp .o
-.cpp.o:
-		$(CXX) $(CXXFLAGS) -c $*.cpp
+#.SUFFIXES: .cpp .o
+#.cpp.o:
+#		$(CXX) $(CXXFLAGS) -c $*.cpp
 
-driver: validate.o mat.o driver.o $(HEADERS)
+validate.o: validate.cpp mat.cpp $(HEADERS)
+		$(CXX) $(CXXFLAGS) -c validate.cpp
+
+mat.o: mat.cpp mat.hpp
+		$(CXX) $(CXXFLAGS) -c mat.cpp
+
+driver.o: mat.cpp validate.cpp $(HEADERS)
+		$(CXX) $(CXXFLAGS) -c driver.cpp
+
+driver: validate.o mat.o driver.o
 		@$(CXX) -g -o driver mat.o validate.o driver.o $(LIBS)
 		@mkdir $(RESULT)
