@@ -43,7 +43,7 @@ class Mat
 
 				Mat(){ classes=features=0; compFunc = nullptr; }
 				double (*compFunc)(const string &);
-				bool getSamp(ifstream &, double []);
+				virtual bool getSamp(ifstream &, double []);
 				virtual void buildMatrix(vector<Sample> &, Matrix&);
 				virtual void readFile(const char*, Matrix &);
 				void addLabels(Matrix &, const Matrix &);

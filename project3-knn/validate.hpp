@@ -10,7 +10,8 @@ class Validation : public Mat
 				vector<Sample> dataSet; 
 				Validation(){}
 				//default comparison function used for fglass
-				static int mComp(const int);
+				static double mComp(const int);
+				bool getSamp(ifstream &, double []);
 		public:
 				//data file, validation split file
 				Validation(const char*, const char*, const uint = 10, const uint = 9, 

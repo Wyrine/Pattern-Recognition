@@ -55,31 +55,35 @@ Validation::readAndBuildMatrix(const char* data)
 				exit(1);
 		}
 		getline(input, line);
-		input.ignore(1, '\n');
-		do
+		while( getSamp(input, tmp) )
 		{
-				for(i = 0; i < features && (input >> tmp[i]); i++)
-				if( i < features) break;
-				if(compFunc == nullptr)
-				{
-						input >> tmp[i];
-						tmp[i] =	mComp(tmp[i]);
-				}
-				else
-				{
-						input >> line;
-						tmp[i] = compFunc(line);
-				}
 				Sample s(features, tmp);
-				cout << s;
 				dataSet.push_back(s);
-		} while(true);
+		}
 		input.close();	
 }
-		int
+		double
 Validation::mComp(const int _cur)
 {
 		return (_cur > 3) ? _cur - 2 : _cur - 1;
 }
+		bool
+Validation::getSamp(ifstream & input, double samp[])
+{
+		int i; string tmp;
 
-
+		for(i = 0; i < features && (input >> samp[i]); i++);
+		if(i < features) return false;
+		
+		if(compFunc == nullptr)
+		{
+				input >> samp[i];
+				samp[i] = mComp(samp[i]);
+		}
+		else
+		{
+				input >> tmp;
+				samp[i] = compFunc(tmp);
+		}
+		return true;
+}
