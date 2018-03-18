@@ -46,11 +46,14 @@ Mat::generateEvals(const Matrix & results, const void* arg, FILE* out, const uin
 		precision = tp / (tp + fp);
 		switch(flag)
 		{
-				case 0:
-						fprintf(out, "%lf,%lf", ((double*)arg)[0], ((double*)arg)[1]);
+				case 0: //prior0,prior1,
+						fprintf(out, "%lf,%lf,", ((double*)arg)[0], ((double*)arg)[1]);
 						break;
-				case 1:
-						fprintf(out, "%d,", *((int*)arg) );
+				case 1://k,dist,
+						fprintf(out, "%d,%d,", *((int*)arg), ((int*)arg)[1] );
+						break;
+				case 2: //validationStep,k,dist
+						fprintf(out, "%d,%d,%d,", *((int*)arg), ((int*)arg)[1], ((int*)arg)[2]);
 						break;
 				default:
 						break;
@@ -184,7 +187,7 @@ Mat::writeHeader(const uint classes, FILE* out, const uint flag)
 								fprintf(out, "PriorClass%d,", i);
 						break;
 				case 1:
-						fprintf(out, "k,");
+						fprintf(out, "k,dist,");
 						break;
 				default:
 						break;
@@ -584,7 +587,9 @@ Mat::runkNN(const uint transType, const uint k, const uint dist, FILE* out)
 				printf("kNN scores:\n");
 				writeHeader(classes, out, 1);
 		}
-		generateEvals(temp, &k, out, 1);
+		int arg[2];
+		arg[0] = k; arg[1] = dist;
+		generateEvals(temp, arg, out, 1);
 		if(out == stdout || out == stderr) printf("\n\n\n\n\n\n");
 }
 		Matrix
@@ -630,9 +635,21 @@ Mat::kNN(const Matrix &_te, const Matrix &_tr, const uint k, const uint dist) co
 						}
 				}
 				//classifying the class with most neighbors
-				rv(i, 0) = (getType(neighbors, 0).getRow() > 
-								getType(neighbors, 1).getRow()) ? 0 : 1;
+				rv(i, 0) = neighborVoting(neighbors);
 		}
+		return rv;
+}
+short
+Mat::neighborVoting(const Matrix& neighbors) const
+{
+		int neighborCounts[classes];
+		memset(neighborCounts, 0, sizeof(int) * classes);
+		for(int i = 0; i < neighbors.getRow(); i++)
+				neighborCounts[ (int)neighbors(i, 1) ]+= 1;
+		int rv = 0;
+		for(int i = 1; i < classes; i++)
+				if( neighborCounts[i] > neighborCounts[rv] )
+						rv = i;
 		return rv;
 }
 		double

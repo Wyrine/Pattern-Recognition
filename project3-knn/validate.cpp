@@ -21,7 +21,6 @@ Validation::validate(const uint m)
 		for(int i=0; i< groups.size(); i++)
 		{
 				//i is the group that is the test set
-				/* call function to build a matrix of non-i groups */
 				for(int j = 0; j< groups.size(); j++)
 						for(int k = 0; k < groups[j].size(); k++)
 						{
@@ -30,7 +29,11 @@ Validation::validate(const uint m)
 								else //current training set
 										train.push_back(dataSet[ groups[j][k] ]);
 						}
-
+				buildMatrix(test, Xte); test.clear();
+				buildMatrix(train, X); train.clear();
+				nXte = cropMatrix(Xte, 0, Xte.getRow(), 0, Xte.getCol()-1);
+				nX = cropMatrix(X, 0, X.getRow(), 0, X.getCol()-1);
+				normalize(nX, nXte, features, 1);
 		}
 }
 		void

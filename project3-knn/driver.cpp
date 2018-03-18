@@ -17,7 +17,7 @@ main(int argc, char** argv)
 				cerr << "Usage: ./driver trainFile testFile numFeatures numClasses\n";
 				return(1);
 		}
-/*		Mat mat(argv[1], argv[2], atoi(argv[3]), atoi(argv[4]), compareFunc);
+		Mat mat(argv[1], argv[2], atoi(argv[3]), atoi(argv[4]), compareFunc);
 		double prior[atoi(argv[4])]; 
 		prior[0] = mat.prior0();
 		prior[1] = mat.prior1();
@@ -32,7 +32,7 @@ main(int argc, char** argv)
 		cout << "Varying Prior probailities, k-values, and writing to files\n"; 
 		mat.varyAllCases();
 		cout << "Done\n"; 
-*/
+
 		Validation v("./data/fglass.dat", "./data/fglass.grp");
 		v.validate();
 		return 0;

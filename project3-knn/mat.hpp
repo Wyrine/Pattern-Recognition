@@ -66,6 +66,7 @@ class Mat
 				virtual void varyNorm3();
 				virtual void varyPCA3();
 				virtual void varyFLD3();
+				short neighborVoting(const Matrix &) const;
 		public:
 				virtual double prior0() { return ((double) getType(X, 0).getRow() ) / X.getRow(); }
 				virtual double prior1() { return ((double) getType(X, 1).getRow() ) / X.getRow(); }
