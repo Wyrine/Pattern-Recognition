@@ -59,6 +59,7 @@ class Mat
 				static Matrix cropMatrix(const Matrix &, const uint, const uint,
 								const uint, const uint);
 				static void writeHeader(const uint, FILE* = stdout, const uint = 0);
+				Matrix getProbabilityMatrix(const Matrix &) const;
 				virtual void varyNorm1();
 				virtual void varyPCA1();
 				virtual void varyFLD1();

@@ -61,6 +61,23 @@ Mat::generateEvals(const Matrix & results, const void* arg, FILE* out, const uin
 		fprintf(out, "%lf,%lf,%lf,%lf,%lf,%lf,%lf,%lf\n", tp, tn, fp, fn,
 						accuracy, sens, spec, precision);
 }
+		Matrix
+Mat::getProbabilityMatrix(const Matrix & result) const
+{
+		Matrix rv(classes, classes);
+		int actual[classes];
+		memset(actual, 0, sizeof(int) * classes);
+
+		for(int i = 0; i < result.getRow(); i++)
+		{
+				++actual[(int)result(i, 1)];
+				++rv(result(i, 1), result(i, 0));
+		}
+		for(int i = 0; i < classes; i++)
+				for(int j = 0; j < classes; j++)
+						rv(i, j) /= actual[i];
+		return rv;
+}
 		void
 Mat::readFile(const char* fName, Matrix &_X)
 {
