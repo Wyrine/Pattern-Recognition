@@ -53,9 +53,12 @@ Mat::generateEvals(const Matrix & results, const void* arg, FILE* out, const uin
 				case 1://k,dist,
 						fprintf(out, "%d,%d,", *((int*)arg), ((int*)arg)[1] );
 						break;
-				case 2: //validationStep,k,dist
+				case 2: //validationStep,k,dist,
 						fprintf(out, "%d,%d,%d,", *((int*)arg), ((int*)arg)[1], ((int*)arg)[2]);
 						break;
+				case 3://L1,L2,
+						fprintf(out, "%s,%s,", classNames[*((int*)arg)].c_str(), 
+										classNames[((int*)arg)[1]].c_str());
 				default:
 						break;
 		}
@@ -63,7 +66,7 @@ Mat::generateEvals(const Matrix & results, const void* arg, FILE* out, const uin
 						accuracy, sens, spec, precision);
 }
 Matrix
-Mat::getProbabilityMatrix(const Matrix & result) const
+Mat::getProbMatrix(const Matrix & result) const
 {
 		Matrix rv(classes, classes);
 		int actual[classes];
@@ -79,8 +82,31 @@ Mat::getProbabilityMatrix(const Matrix & result) const
 						rv(i, j) /= actual[i];
 		return rv;
 }
+		void
+Mat::fuseNB_All()
+{
+		Matrix fusedTable, pred1, pred2, fusedPred(predictions[0].getRow(), 1);
+		FILE* out; out = openFile("fusionNB_Exhaustive.csv");
+		fprintf(out, "L1_Name,L2_Name,");
+		writeHeader(classes, out, -1);
+		addLabels(fusedPred, predictions[0]);
+		for(uint i = 0; i < 12; i++)
+		{
+				for(uint j = 0; j < 12; j++)
+				{
+						if( i == j ) continue;
+						int arg[2]; arg[0] = i; arg[1] = j;
+						pred1 = predictions[i]; pred2 = predictions[j];
+						fusedTable = fuseProbMatrix(getProbMatrix(pred1), getProbMatrix(pred2));
+							for(uint k = 0; k < pred1.getRow(); k++)
+									fusedPred(k, 0) = fusedTable((int)pred1(k, 0), (int)pred2(k, 0));
+						generateEvals(fusedPred, arg, out, 3);
+				}
+		}
+		fclose(out);
+}
 Matrix
-Mat::FuseNB(const Matrix & L1, const Matrix & L2) const
+Mat::fuseProbMatrix(const Matrix & L1, const Matrix & L2) const
 {
 		Matrix rv(classes, classes);
 		Matrix curMul(classes, 1);
@@ -246,6 +272,7 @@ Mat::runCase1(const double prior[])
 		MPP(nXte, prior, tmpSig, mu, rv);
 		cout << "Normalized X: \n";
 		generateEvals(rv, prior);
+		predictions.push_back(rv);
 
 		tmpSig.clear();
 		rv.createMatrix(pXte.getRow(), 1);
@@ -256,6 +283,7 @@ Mat::runCase1(const double prior[])
 		MPP(pXte, prior, tmpSig, pMu, rv);
 		cout << "PCA: \n";
 		generateEvals(rv, prior);
+		predictions.push_back(rv);
 
 
 		tmpSig.clear();
@@ -266,6 +294,7 @@ Mat::runCase1(const double prior[])
 		MPP(fXte, prior, tmpSig, fMu, rv);
 		cout << "FLD: \n";
 		generateEvals(rv, prior);
+		predictions.push_back(rv);
 
 		cout << "\n\n\n\n\n";
 }
@@ -343,6 +372,8 @@ Mat::runCase2(const double prior[])
 		MPP(nXte, prior, tmpSig, mu, rv);
 		cout << "Normalized X: \n";
 		generateEvals(rv, prior); 
+		predictions.push_back(rv);
+
 		tmpSig.clear();
 		rv.createMatrix(pXte.getRow(), 1);
 
@@ -351,6 +382,7 @@ Mat::runCase2(const double prior[])
 		MPP(pXte, prior, tmpSig, pMu, rv);
 		cout << "PCA: \n";
 		generateEvals(rv, prior);
+		predictions.push_back(rv);
 
 		tmpSig.clear();
 		rv.createMatrix(fXte.getRow(), 1);
@@ -359,6 +391,7 @@ Mat::runCase2(const double prior[])
 		MPP(fXte, prior, tmpSig, fMu, rv);
 		cout << "FLD: \n";
 		generateEvals(rv, prior);
+		predictions.push_back(rv);
 		cout << "\n\n\n\n\n";
 }
 		void
@@ -432,16 +465,19 @@ Mat::runCase3(const double prior[])
 		MPP(nXte, prior, sig, mu, rv);
 		cout << "Normalized X: \n";
 		generateEvals(rv, prior); 
+		predictions.push_back(rv);
 
 		rv.createMatrix(pXte.getRow(), 1);
 		MPP(pXte, prior, pSig, pMu, rv);
 		cout << "PCA: \n";
 		generateEvals(rv, prior);
+		predictions.push_back(rv);
 
 		rv.createMatrix(fXte.getRow(), 1);
 		MPP(fXte, prior, fSig, fMu, rv);
 		cout << "FLD: \n";
 		generateEvals(rv, prior);
+		predictions.push_back(rv);
 		cout << "\n\n\n\n\n";
 }
 
@@ -629,7 +665,11 @@ Mat::runkNN(const uint transType, const uint k, const uint dist, FILE* out)
 		int arg[2];
 		arg[0] = k; arg[1] = dist;
 		generateEvals(temp, arg, out, 1);
-		if(out == stdout || out == stderr) printf("\n\n\n\n\n\n");
+		if(out == stdout || out == stderr)
+		{
+				predictions.push_back(temp);
+				printf("\n\n\n\n\n\n");
+		}
 }
 		Matrix
 Mat::cropMatrix(const Matrix& m, const uint sR, const uint eR,
@@ -641,8 +681,8 @@ Mat::cropMatrix(const Matrix& m, const uint sR, const uint eR,
 						rv(i-sR, j-sC) = m(i, j);
 		return rv;
 }
-		void
-Mat::kNN_Body(const Matrix &_te, const Matrix &_tr, const uint k, const uint dist,
+void
+Mat::kNN_Classify(const Matrix &_te, const Matrix &_tr, const uint k, const uint dist,
 				const int i, Matrix &rv) const
 {
 		Matrix neighbors(k, 2), curTe, curTr;
@@ -674,30 +714,28 @@ Mat::kNN_Body(const Matrix &_te, const Matrix &_tr, const uint k, const uint dis
 		//classifying the class with most neighbors
 		rv(i, 0) = neighborVoting(neighbors);
 }
-		Matrix
+Matrix
 Mat::kNN(const Matrix &_te, const Matrix &_tr, const uint k, const uint dist) const
 {
 
 		Matrix rv(_te.getRow(), 1), neighbors(k, 2), curTe, curTr;
 		for(int i = 0; i < _te.getRow(); i++)	
-		{
-				kNN_Body(_te, _tr, k, dist, i, rv);
-		}
+				kNN_Classify(_te, _tr, k, dist, i, rv);
 		return rv;
 }
-		Matrix
+Matrix
 Mat::Parallel_kNN(const Matrix &_te, const Matrix &_tr, const uint k, 
 				const uint dist) const
 {
-		Matrix rv(_te.getRow(), 1), neighbors(k, 2), curTe, curTr;
 		thread t[_te.getRow()];
+		Matrix rv(_te.getRow(), 1), neighbors(k, 2), curTe, curTr;
 		for(int i = 0; i < _te.getRow(); i++)
-				t[i] = thread(&Mat::kNN_Body, this, cref(_te), cref(_tr), k, dist, i, ref(rv));
+				t[i] = thread(&Mat::kNN_Classify, this, cref(_te), cref(_tr), k, dist, i, ref(rv));
 		for(int i = 0; i < _te.getRow(); i++)
 				t[i].join();
 		return rv;
 }
-		short
+short
 Mat::neighborVoting(const Matrix& neighbors) const
 {
 		int neighborCounts[classes];

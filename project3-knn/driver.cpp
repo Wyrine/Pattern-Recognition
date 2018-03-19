@@ -28,6 +28,7 @@ main(int argc, char** argv)
 		mat.runkNN(0, 3, 2);
 		mat.runkNN(1, 3, 2);
 		mat.runkNN(2, 3, 2);
+		mat.fuseNB_All();
 
 		cout << "Varying Prior probailities, k-values, and writing to files\n"; 
 		mat.varyAllCases();

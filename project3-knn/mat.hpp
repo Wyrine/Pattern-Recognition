@@ -18,6 +18,10 @@
 #define PI_CONST 1.0 / pow(2*M_PI, (testData.getCol() - 1 )/2)
 #define STORAGE_PATH "./performance/"
 typedef unsigned int uint;
+static const string classNames[] = {"case1_norm", "case1_PCA", "case1_FLD",
+		"case2_norm", "case2_PCA", "case2_FLD",
+		"case3_norm", "case3_PCA", "case3_FLD",
+		"kNN_norm", "kNN_PCA", "kNN_FLD" };
 
 int normalize(Matrix &, Matrix &, const int, const int);
 int pca(Matrix &, Matrix &, const int, const float, const int);
@@ -42,6 +46,12 @@ class Mat
 				Matrix X, nX, Xte, nXte, pX, pXte, fX, fXte, fW;
 				vector<Matrix> mu, sig, pMu, pSig, fMu, fSig;
 
+				//index 0-2: case 1_norm, case 1_PCA, case 1_FLD
+				//index 3-5: case 2_norm, case 2_PCA, case 2_FLD
+				//index 6-8: case 3_norm, case 3_PCA, case 3_FLD
+				//index 9-11: kNN_norm, kNN_PCA, kNN_FLD
+				vector<Matrix> predictions;
+
 				Mat(){ classes=features=0; compFunc = nullptr; }
 				double (*compFunc)(const string &);
 				virtual bool getSamp(ifstream &, double []);
@@ -53,7 +63,7 @@ class Mat
 								const vector<Matrix> &, Matrix&);
 				Matrix kNN(const Matrix &, const Matrix &, const uint, const uint) const;
 				Matrix Parallel_kNN(const Matrix &, const Matrix &, const uint, const uint) const;
-				void kNN_Body(const Matrix &, const Matrix &, const uint, const uint,
+				void kNN_Classify(const Matrix &, const Matrix &, const uint, const uint,
 								const int, Matrix &) const;
 				short neighborVoting(const Matrix &) const;
 				static double Minkowski(const Matrix &, const Matrix &, const uint dist = 2);
@@ -62,8 +72,8 @@ class Mat
 				static Matrix cropMatrix(const Matrix &, const uint, const uint,
 								const uint, const uint);
 				static void writeHeader(const uint, FILE* = stdout, const uint = 0);
-				Matrix getProbabilityMatrix(const Matrix &) const;
-				Matrix FuseNB(const Matrix &, const Matrix &) const;
+				Matrix getProbMatrix(const Matrix &) const;
+				Matrix fuseProbMatrix(const Matrix &, const Matrix &) const;
 				virtual void varyNorm1();
 				virtual void varyPCA1();
 				virtual void varyFLD1();
@@ -78,6 +88,7 @@ class Mat
 				virtual double prior1() { return ((double) getType(X, 1).getRow() ) / X.getRow(); }
 				Mat(const char*, const char*, const uint&, const uint&, 
 								double (*_compFunc)(const string &));
+				virtual void fuseNB_All();
 				virtual void varyCase1();
 				virtual void varyCase2();
 				virtual void varyCase3();
