@@ -1,7 +1,7 @@
 CXX = g++ -std=c++11
 INCLUDES = ../Matrix/include
 CXXFLAGS = -O2 -g -Wall -I$(INCLUDES)
-LIBS = $(INCLUDES)/libmatrix.a 
+LIBS = $(INCLUDES)/libmatrix.a
 EXECUTABLES = driver
 HEADERS = mat.hpp validate.hpp
 RESULT = performance

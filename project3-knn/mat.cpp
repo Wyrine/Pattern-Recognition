@@ -1,4 +1,5 @@
 #include <iostream>
+#include <functional>
 #include "mat.hpp"
 
 using namespace std;
@@ -61,7 +62,7 @@ Mat::generateEvals(const Matrix & results, const void* arg, FILE* out, const uin
 		fprintf(out, "%lf,%lf,%lf,%lf,%lf,%lf,%lf,%lf\n", tp, tn, fp, fn,
 						accuracy, sens, spec, precision);
 }
-		Matrix
+Matrix
 Mat::getProbabilityMatrix(const Matrix & result) const
 {
 		Matrix rv(classes, classes);
@@ -78,13 +79,13 @@ Mat::getProbabilityMatrix(const Matrix & result) const
 						rv(i, j) /= actual[i];
 		return rv;
 }
-		Matrix
+Matrix
 Mat::FuseNB(const Matrix & L1, const Matrix & L2) const
 {
 		Matrix rv(classes, classes);
 		Matrix curMul(classes, 1);
 		int maxInd;
-		
+
 		for( int i = 0; i < classes; i++)//classifier L1 chose i (col)
 				for( int j = 0; j < classes; j++) //classifier L2 chose j (col)
 				{
@@ -640,44 +641,63 @@ Mat::cropMatrix(const Matrix& m, const uint sR, const uint eR,
 						rv(i-sR, j-sC) = m(i, j);
 		return rv;
 }
-Matrix
+		void
+Mat::kNN_Body(const Matrix &_te, const Matrix &_tr, const uint k, const uint dist,
+				const int i, Matrix &rv) const
+{
+		Matrix neighbors(k, 2), curTe, curTr;
+		curTe = cropMatrix(_te, i, i+1, 0, _te.getCol()-1); 
+		//initialize the k neighbors to the first k distances from the training set
+		for(int j = 0; j < k; j++)
+		{
+				neighbors(j, 0) = Minkowski(curTe, 
+								cropMatrix(_tr, j, j+1, 0, _tr.getCol()-1), dist);
+				neighbors(j, 1) = _tr(j, _tr.getCol()-1);
+		}
+		//and loop through the rest of the training set
+		for(int j = k; j < _tr.getRow(); j++)
+		{
+				curTr = cropMatrix(_tr, j, j+1, 0, _tr.getCol()-1); 
+				double curDist = Minkowski(curTe, curTr, dist);
+				int max_dist_index = 0;
+				for(int t = 1; t < k; t++)
+						if( neighbors(t, 0) > neighbors(max_dist_index, 0) )
+								max_dist_index = t;
+				//replace the maximum distance if it is longer than
+				//the current distance
+				if( neighbors(max_dist_index, 0) > curDist )
+				{
+						neighbors(max_dist_index, 0) = curDist;
+						neighbors(max_dist_index, 1) = _tr(j, _tr.getCol()-1);
+				}
+		}
+		//classifying the class with most neighbors
+		rv(i, 0) = neighborVoting(neighbors);
+}
+		Matrix
 Mat::kNN(const Matrix &_te, const Matrix &_tr, const uint k, const uint dist) const
 {
+
 		Matrix rv(_te.getRow(), 1), neighbors(k, 2), curTe, curTr;
 		for(int i = 0; i < _te.getRow(); i++)	
 		{
-				//the body of this loop can be done in parallel
-				curTe = cropMatrix(_te, i, i+1, 0, _te.getCol()-1); 
-				//initialize the k neighbors to the first k distances from the training set
-				for(int j = 0; j < k; j++)
-				{
-						neighbors(j, 0) = Minkowski(curTe, 
-										cropMatrix(_tr, j, j+1, 0, _tr.getCol()-1), dist);
-						neighbors(j, 1) = _tr(j, _tr.getCol()-1);
-				}
-				//and loop through the rest of the training set
-				for(int j = k; j < _tr.getRow(); j++)
-				{
-						curTr = cropMatrix(_tr, j, j+1, 0, _tr.getCol()-1); 
-						double curDist = Minkowski(curTe, curTr, dist);
-						int max_dist_index = 0;
-						for(int t = 1; t < k; t++)
-								if( neighbors(t, 0) > neighbors(max_dist_index, 0) )
-										max_dist_index = t;
-						//replace the maximum distance if it is longer than
-						//the current distance
-						if( neighbors(max_dist_index, 0) > curDist )
-						{
-								neighbors(max_dist_index, 0) = curDist;
-								neighbors(max_dist_index, 1) = _tr(j, _tr.getCol()-1);
-						}
-				}
-				//classifying the class with most neighbors
-				rv(i, 0) = neighborVoting(neighbors);
+				kNN_Body(_te, _tr, k, dist, i, rv);
 		}
 		return rv;
 }
-short
+		Matrix
+Mat::Parallel_kNN(const Matrix &_te, const Matrix &_tr, const uint k, 
+				const uint dist) const
+{
+		Matrix rv(_te.getRow(), 1), neighbors(k, 2), curTe, curTr;
+		thread t[_te.getRow()];
+		for(int i = 0; i < _te.getRow(); i++)
+				t[i] = thread(&Mat::kNN_Body, this, cref(_te), cref(_tr), k, dist, i, ref(rv));
+		for(int i = 0; i < _te.getRow(); i++)
+				t[i].join();
+		return rv;
+}
+		short
 Mat::neighborVoting(const Matrix& neighbors) const
 {
 		int neighborCounts[classes];

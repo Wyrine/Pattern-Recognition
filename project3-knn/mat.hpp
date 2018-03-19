@@ -52,6 +52,9 @@ class Mat
 				Matrix & MPP(Matrix&, const double [], const vector<Matrix> &,
 								const vector<Matrix> &, Matrix&);
 				Matrix kNN(const Matrix &, const Matrix &, const uint, const uint) const;
+				Matrix Parallel_kNN(const Matrix &, const Matrix &, const uint, const uint) const;
+				void kNN_Body(const Matrix &, const Matrix &, const uint, const uint,
+								const int, Matrix &) const;
 				short neighborVoting(const Matrix &) const;
 				static double Minkowski(const Matrix &, const Matrix &, const uint dist = 2);
 				static void generateEvals(const Matrix &, const void*, FILE* = stdout, const uint = 0);
