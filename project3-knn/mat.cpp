@@ -78,6 +78,27 @@ Mat::getProbabilityMatrix(const Matrix & result) const
 						rv(i, j) /= actual[i];
 		return rv;
 }
+		Matrix
+Mat::FuseNB(const Matrix & L1, const Matrix & L2) const
+{
+		Matrix rv(classes, classes);
+		Matrix curMul(classes, 1);
+		int maxInd;
+		
+		for( int i = 0; i < classes; i++)//classifier L1 chose i (col)
+				for( int j = 0; j < classes; j++) //classifier L2 chose j (col)
+				{
+						for(int k = maxInd = 0; k < classes; k++) 
+						{		//element-wise multiplication and take max
+								//class in the resulting column
+								curMul(k, 0) = L1(k, i) * L2(k, j);
+								if(k > 0 && (curMul(maxInd, 0) < curMul(k, 0)))
+										maxInd = k;
+						}
+						rv(i, j) = maxInd;
+				}
+		return rv;
+}
 		void
 Mat::readFile(const char* fName, Matrix &_X)
 {
@@ -619,7 +640,7 @@ Mat::cropMatrix(const Matrix& m, const uint sR, const uint eR,
 						rv(i-sR, j-sC) = m(i, j);
 		return rv;
 }
-		Matrix
+Matrix
 Mat::kNN(const Matrix &_te, const Matrix &_tr, const uint k, const uint dist) const
 {
 		Matrix rv(_te.getRow(), 1), neighbors(k, 2), curTe, curTr;
