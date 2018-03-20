@@ -1,4 +1,5 @@
 #include <iostream>
+#include <ctime>
 #include <functional>
 #include "mat.hpp"
 
@@ -643,28 +644,35 @@ Mat::varykNN(const uint transType, const uint dist)
 Mat::runkNN(const uint transType, const uint k, const uint dist, FILE* out)
 {
 		Matrix temp;
+		clock_t t;
 		switch(transType)
 		{
 				case 0:
+						t = clock();
 						temp = kNN(nXte, nX, k, dist);
+						t = clock() - t;
 						addLabels(temp, nXte);
 						break;
 				case 1:
+						t = clock();
 						temp = kNN(pXte, pX, k, dist);
+						t = clock() - t;
 						addLabels(temp, pXte);
 						break;
 				case 2:
+						t = clock();
 						temp = kNN(fXte, fX, k, dist);
+						t = clock() - t;
 						addLabels(temp, fXte);
 						break;
 		}
 		if(out == stdout || out == stderr) 
 		{
-				printf("kNN scores:\n");
+				printf("kNN score for fixed k and distance. Time taken in seconds: %lf:\n", 
+						((double)t)/CLOCKS_PER_SEC);
 				writeHeader(classes, out, 1);
 		}
-		int arg[2];
-		arg[0] = k; arg[1] = dist;
+		int arg[2]; arg[0] = k; arg[1] = dist;
 		generateEvals(temp, arg, out, 1);
 		if(out == stdout || out == stderr)
 		{
