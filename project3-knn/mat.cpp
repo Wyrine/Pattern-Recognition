@@ -636,7 +636,7 @@ Mat::varykNN(const uint transType, const uint dist)
 		}
 		writeHeader(classes, out, 1);
 		for(int k = 1; k <= MAX_K_NEIGHBORS; k+= 2)
-				for(uint d = 1; d < 5; d++)
+				for(uint d = 1; d < MAX_DIST; d++)
 						runkNN(transType, k, d, out);
 		fclose(out);
 }

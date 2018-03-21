@@ -15,6 +15,7 @@
 
 #define STEP_SIZE 0.1
 #define MAX_K_NEIGHBORS sqrt(X.getRow())
+#define MAX_DIST 101
 #define PI_CONST 1.0 / pow(2*M_PI, (testData.getCol() - 1 )/2)
 #define STORAGE_PATH "./performance/"
 typedef unsigned int uint;

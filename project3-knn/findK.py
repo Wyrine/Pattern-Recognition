@@ -6,7 +6,7 @@ import sys
 
 
 if __name__ == "__main__":
-		print("Validation row as test, best k value, Matching accuracy")
+		print("Validation row as test, best k value, best distance,  Matching accuracy")
 		for i in range(1, len(sys.argv)):
 				df = pd.read_csv(sys.argv[i])
 				key = sys.argv[i].replace(".csv", "").replace("performance/", "")
@@ -14,4 +14,4 @@ if __name__ == "__main__":
 				bestAcc = df["Accuracy"][maxIndex]
 				bestK = df["k"][maxIndex]
 		
-				print(key, (bestK, bestAcc) )
+				print(key, (bestK, df["dist"][maxIndex], bestAcc) )

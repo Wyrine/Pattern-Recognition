@@ -48,7 +48,8 @@ Validation::varykNN(const uint valStep, const uint dist)
 		writeHeader(classes, out, 1);
 		
 		for(int k = 1; k < MAX_K_NEIGHBORS; k+=2)
-			runkNN(0, k, dist, out);
+				for(int d = 1; d < MAX_DIST; d++)
+						runkNN(0, k, d, out);
 		fclose(out);
 }
 		void
