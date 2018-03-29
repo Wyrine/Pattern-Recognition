@@ -2,19 +2,9 @@
 
 import numpy as np
 import matplotlib.pyplot as plt
-
-def perceptron(te):
-		x = np.array([[0, 0], [1, 0], [0, 1], [1, 1]], dtype=np.float64)
-		w = [0,0]
-		for i in range(10):
-				res = []
-				for j in range(len(x)):
-						prod = np.matmul(np.transpose(w), x[j])
-						prod = 1 if prod >= 0.5 else 0
-						res.append(prod)
-						w[0] = w[0] + (te[j] - prod) * x[j, 0]
-						w[1] = w[1] + (te[j] - prod) * x[j, 1] 
-				print("\t", res)
+def perc(x):
+		#x0 = -w1 / w0 * x1 + bias/ w0 is the line
+		return -1 * x + 1.5
 
 if __name__ == "__main__":
 		mm = np.matmul
@@ -34,8 +24,25 @@ if __name__ == "__main__":
 		plt.vlines((mu0 + mu1)/2, -10, 10)
 		plt.plot(fTr[:3], np.zeros(3),  "b.")
 		plt.plot(fTr[3], np.zeros(1), "r.")
-		plt.show()
-		plt.clf()
+#		plt.show()
+#		plt.clf()
 
-# perceptron
-		
+# PCA
+		tr = tran(tr)
+		te = tran(te)
+#
+#		eigs, eigVecs = np.linalg.eig(np.cov(tr))
+#		eigVecs = eigVecs[:, 0]
+#		pTr = mm(tran(eigVecs), tr)
+#
+#		plt.plot(pTr[:3], np.zeros(3), "r.")
+#		plt.plot(pTr[3], 0, "b.")
+		plt.vlines(2/3, -10, 10)
+#		plt.show()
+
+# Perceptron
+		x = np.linspace(0.1, 1.53)
+		plt.plot(tran(tr)[:3, 0], tran(tr)[:3, 1], "g.")
+		plt.plot(tran(tr)[3, 0], tran(tr)[3, 1], "r.")
+		plt.plot(x, perc(x), "b-")
+		plt.show()
