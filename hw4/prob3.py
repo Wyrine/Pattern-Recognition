@@ -11,7 +11,7 @@ if __name__ == "__main__":
 		tran = np.transpose
 		te = [0, 0, 0, 1]
 		tr = [[0, 0], [0, 1], [1, 0], [1, 1]]
-
+		plt.title("FLD, PCA, and Perceptron Comparison")
 # FLD
 		s0 = 2 * np.cov(tran(tr[:3]))
 		s1 = 0 * np.cov(tran(tr[3]))

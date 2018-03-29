@@ -20,12 +20,14 @@ def gd(t, c, eps):
 if __name__ == "__main__":
 		x = np.linspace(-10,10)
 #problem 1.a
-		plt.plot(f(x), "b-")
+		plt.title("Problem 1.a")
+		plt.plot(x, f(x), "b-")
 		plt.xlim([-10,10])
 		plt.show()
 		plt.clf()
 
 #problem 1.b.i
+		plt.title("Problem 1.b.i with learning rate 0.01")
 		plt.plot(x, f(x), "b-")
 		plt.xlim([-10, 10])
 		sols = gd(7, 0.01, 10e-3)
@@ -35,6 +37,7 @@ if __name__ == "__main__":
 		plt.clf()
 
 #problem 1.b.ii
+		plt.title("Problem 1.b.ii with learning rate 0.01")
 		plt.plot(x, f(x), "b-")
 		plt.xlim([-10,10])
 		sols = gd(1, 0.01, 10e-3)
@@ -43,6 +46,7 @@ if __name__ == "__main__":
 		plt.clf()
 
 #problem 1.b.iii
+		plt.title("Problem 1.b.iii with learning rate 0.1")
 		plt.plot(x, f(x), "b-")
 		plt.xlim([-10,10])
 		sols = gd(7, 0.1, 10e-3)
