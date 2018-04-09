@@ -1,6 +1,7 @@
 #!/usr/local/bin/python3
 import sys
 import ppm as _ppm
+import pixel as pix
 
 def readImage():
 		with open(sys.argv[1]) as f:
@@ -15,16 +16,19 @@ def readImage():
 				w, h = int(tmp[0]), int(tmp[1])
 				mI = int(f.readline().replace('\n', '').replace(' ', ''))
 				ppm = _ppm.PPM(w,h,mI)
-				data = []
-				for line in f:
-						for ch in line:
-								data.append(int(ch)) 
-		print(data)
+				data = f.read().replace('\n', ' ').split()
+				for i in range(0, len(data), 3):
+						r, g, b = data[i], data[i+1], data[i+2]
+						ppm.addPixel(pix.Pixel(r,g,b))
+		return ppm
+
+def writeImage():
+		pass
 
 
 
 def main():
-		readImage()
+		ppm = readImage()
 		return 0
 
 if __name__ == "__main__":
