@@ -23,12 +23,12 @@ def readImage():
 								k+=3
 		return ppm, mI
 
-def writeImage(mappings, mI, clusters):
-		print("P3")
-		print(len(mappings), len(mappings[0]))
-		print(mI)
+def writeImage(mappings, mI, clusters, name = sys.stdout):
+		print("P3", file=name)
+		print(len(mappings), len(mappings[0]), file =name)
+		print(mI, file = name)
 		for i in range(len(mappings)):
 				for j in range(len(mappings[0])):
 						for k in range(3):
-								print(int(clusters[int(mappings[i,j,0]), k]), end=" ")
-						print()
+								print(int(clusters[int(mappings[i,j,0]), k]), file=name, end=" ")
+						print(file=name)

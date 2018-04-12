@@ -26,10 +26,7 @@ def updateClusters(ppm, mappings, means):
 		return means
 
 def kMeans(ppm, k, dist = euc):
-		means = np.zeros((k, 3), dtype= np.float64)
-		for i in range(k):
-				for j in range(3):
-						means[i, j] = randint(0, 255)
+		means = np.random.uniform(0,255,k*3).reshape([k,3])
 
 		w, h = len(ppm[0]), len(ppm)
 		#h*w matrix with each element being [cluster, distance]
@@ -63,8 +60,10 @@ def kMeans(ppm, k, dist = euc):
 
 def main():
 		ppm, mI = rpp.readImage()
-		mappings, clusters = kMeans(ppm, int(sys.argv[2]))
-		rpp.writeImage(mappings, mI, clusters)
+		for k in [2, 16, 32, 64, 128, 256]:
+				mappings, clusters = kMeans(ppm, k)
+				with open('kMeans_' + str(k) + ".ppm", 'w') as f:
+						rpp.writeImage(mappings, mI, clusters, f)
 		return 0
 
 if __name__ == "__main__":

@@ -16,18 +16,18 @@ def winnerTakeAll(ppm, k, eps, dist = euc):
 		w, h = len(ppm[0]), len(ppm)
 		#h*w matrix with each element being [cluster, distance]
 		mappings = np.zeros((h,w, 2), dtype=np.float)
-		mappings.fill(float("1000000000000000000"))
+		mappings.fill(float("inf"))
 
 		iteration = 0
 		changed = True
-		while changed and iteration < 30:
+		while changed and iteration < 2:
 				iteration += 1
 				print("Starting iteration:", iteration, file=sys.stderr)
 				changed = False
 				#map all the pixels to a clusters and if any single one changes then changed = True
 				for i in range(h):
 						for j in range(w): #each pixel
-								winner = int(mappings[i,j,0])
+								winner = mappings[i,j,0]
 								bestDist = mappings[i,j,1]
 								for t in range(k): #each cluster
 										#compute the distance
@@ -38,7 +38,8 @@ def winnerTakeAll(ppm, k, eps, dist = euc):
 												changed = True
 												bestDist = newDist
 												winner = t
-								if winner != int(mappings[i,j,0]):
+								if winner != mappings[i,j,0]:
+										winner = int(winner)
 										means[winner] = means[winner] + eps * (ppm[i,j] - means[winner])
 										mappings[i,j,0] = winner
 										mappings[i,j,1] = bestDist
@@ -46,8 +47,10 @@ def winnerTakeAll(ppm, k, eps, dist = euc):
 
 def main():
 		ppm, mI = rpp.readImage()
-		mappings, clusters = winnerTakeAll(ppm, int(sys.argv[2]), 0.1)
-		rpp.writeImage(mappings, mI, clusters)
+		for k in [2, 16, 32, 64, 128, 256]:
+				mappings, clusters = winnerTakeAll(ppm, k, 0.1)
+				with open('wta_'+str(k)+'.ppm', 'w') as f:
+						rpp.writeImage(mappings, mI, clusters, f)
 		return 0
 
 if __name__ == "__main__":
