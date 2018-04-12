@@ -23,7 +23,7 @@ with open(argv[1]) as f:
 
 for var in argv[2:]:
 		with open(var) as f:
-				for i in range(4):
+				for i in range(3):
 						f.readline()
 				other = np.array(f.read().replace("\n", " ").split()).astype(np.int).reshape([h*w, 3])
 				var = int(var[var.find('_') + 1:-4])
