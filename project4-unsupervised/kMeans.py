@@ -55,16 +55,16 @@ def kMeans(ppm, k, dist = euc):
 												mappings[i, j] = [t, newDist]
 				#compute the mean of each cluster based off of the pixels associated with it
 				if changed: means = updateClusters(ppm, mappings, means)
-		print("Done with k=",k, file=sys.stderr)
 		return mappings, means	
 
 
 def main():
 		ppm, mI = rpp.readImage()
-		for k in [2, 16, 8, 32, 64, 128, 256]:
+		for k in [2, 8, 16, 32, 64, 128, 256]:
 				mappings, clusters = kMeans(ppm, k)
 				with open('kMeans_' + str(k) + ".ppm", 'w') as f:
 						rpp.writeImage(mappings, mI, clusters, f)
+				print("Done with k=",k, file=sys.stderr)
 		return 0
 
 if __name__ == "__main__":

@@ -64,7 +64,6 @@ def SOM(ppm, k, eps, phi, sig, dist = euc):
 										mappings[i,j,0] = winner
 										mappings[i,j,1] = bestDist
 				if changed: means = updateClusters(ppm, mappings, means)
-		print("Done with k=",k, file=sys.stderr)
 		return mappings, means	
 
 def main():
@@ -73,6 +72,7 @@ def main():
 				mappings, clusters = SOM(ppm, k, 0.1, myPhi, 1)
 				with open('kMap_'+str(k)+'.ppm', 'w') as f:
 						rpp.writeImage(mappings, mI, clusters, f)
+				print("Done with k=",k, file=sys.stderr)
 		return 0
 
 if __name__ == "__main__":
